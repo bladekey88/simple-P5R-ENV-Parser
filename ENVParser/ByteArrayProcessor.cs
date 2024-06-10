@@ -25,6 +25,10 @@ namespace ENVParser
                     }
                     return BitConverter.ToSingle(slicedBytes,0);
                 case "u32":
+                    if (BitConverter.IsLittleEndian)
+                    {
+                        Array.Reverse(slicedBytes); // Reverse bytes if little endian
+                    }
                     return BitConverter.ToUInt32(slicedBytes);
                 case "u8":
                     return slicedBytes[0];
