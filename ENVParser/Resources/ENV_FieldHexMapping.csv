@@ -1,0 +1,185 @@
+FieldName,HexAddress,FieldLength,FieldType
+ENV Header,0h,16,struct Header
+ENV Params,10h,792,struct EnvParams
+Enable Field Model Section,11h,1,enum Boolean
+Field Model Section,12h,280,struct FieldModelParams
+Field Model Diffuse Red,12h,4,f32
+Field Model Diffuse Green,16h,4,f32
+Field Model Diffuse Blue,1Ah,4,f32
+Field Model Diffuse Alpha,1Eh,4,f32
+Field Model Ambient Red,22h,4,f32
+Field Model Ambient Green,26h,4,f32
+Field Model Ambient Blue,2Ah,4,f32
+Field Model Ambient Alpha,2Eh,4,f32
+Field Model Specular Red,32h,4,f32
+Field Model Specular Green,36h,4,f32
+Field Model Specular Blue,3Ah,4,f32
+Field Model Specular Alpha,3Eh,4,f32
+Field Model Emissive Red,42h,4,f32
+Field Model Emissive Green,46h,4,f32
+Field Model Emissive Blue,4Ah,4,f32
+Field Model Emissive Alpha,4Eh,4,f32
+Field42,52h,4,f32
+Field46,56h,4,f32
+Field4A,5Ah,4,f32
+Field4E,5Eh,4,f32
+Field Model Light X (Unsure),62h,4,f32
+Field Model Light Y (Unsure),66h,4,f32
+Field Model Light Z (Unsure),6Ah,4,f32
+Unused Texture Adjustment Section,6Eh,188,struct FieldModelReserve
+Reserve[47],6Eh,188,f32
+Enable Character Model Section,12Bh,1,enum Boolean
+Character Model Section,12Ch,104,struct CharModelParams
+Character Model Diffuse Red,12Ch,4,f32
+Character Model Diffuse Green,130h,4,f32
+Character Model Diffuse Blue,134h,4,f32
+Character Model Diffuse Alpha?,138h,4,f32
+Character Model Ambient Red,13Ch,4,f32
+Character Model Ambient Green,140h,4,f32
+Character Model Ambient Blue,144h,4,f32
+Character Model Ambient Alpha?,148h,4,f32
+Character Model Specular Red,14Ch,4,f32
+Character Model Specular Green,150h,4,f32
+Character Model Specular Blue,154h,4,f32
+Character Model Specular Alpha?,158h,4,f32
+Character Model Emissive Red,15Ch,4,f32
+Character Model Emissive Green,160h,4,f32
+Character Model Emissive Blue,164h,4,f32
+Character Model Emissive Alpha?,168h,4,f32
+Field16C,16Ch,4,f32
+Field170,170h,4,f32
+Field174,174h,4,f32
+Field178,178h,4,f32
+Character Model Light X (Unsure),17Ch,4,f32
+Character Model Light Y (Unsure),180h,4,f32
+Character Model Light Z (Unsure),184h,4,f32
+Field188,188h,4,f32
+Model Near Clip,18Ch,4,f32
+Model Far Clip,190h,4,f32
+Fog Section,194h,53,struct FogParams
+Enable Fog,194h,1,enum Boolean
+Field195,195h,1,enum Boolean
+Field196,196h,1,enum Boolean
+Disable Fog,197h,1,enum Boolean
+Fog Strength (Near),198h,4,f32
+Fog Strength (Far),19Ch,4,f32
+Fog Red,1A0h,4,f32
+Fog Green,1A4h,4,f32
+Fog Blue,1A8h,4,f32
+Fog Alpha,1ACh,4,f32
+Enable Floor Fog,1B0h,1,enum Boolean
+Floor Fog Upper Bound,1B1h,4,f32
+Floor Fog Lower Bound,1B5h,4,f32
+Floor Fog Red,1B9h,4,f32
+Floor Fog Green,1BDh,4,f32
+Floor Fog Blue,1C1h,4,f32
+Floor Fog Alpha,1C5h,4,f32
+Lighting Section,1C9h,135,struct LightingParams
+Enable HDR/Graphic Output,1C9h,1,enum Boolean
+Enable ToneMap/Bloom,1CAh,1,enum Boolean
+Enable StarFilter/Glare,1CBh,1,enum Boolean
+Field1CC,1CCh,4,u32
+Field1D0,1D0h,4,u32
+Bloom Amount?,1D4h,4,f32
+Bloom Detail?,1D8h,4,f32
+Bloom White Level?,1DCh,4,f32
+Bloom Dark Level?,1E0h,4,f32
+Glare Sensitivity,1E4h,4,f32
+Scene White Levels,1E8h,4,f32
+Scene Dark Levels,1ECh,4,f32
+Field1F0,1F0h,4,f32
+Field1F4,1F4h,4,f32
+Field1F8,1F8h,4,f32
+Field1FC,1FCh,4,u32
+Field200,200h,4,f32
+Field204,204h,4,f32
+Field208,208h,4,u32
+Field20C,20Ch,4,u32
+Field210,210h,4,f32
+Field214,214h,4,f32
+Red Colour Boost,218h,4,f32
+Green Colour Boost,21Ch,4,f32
+Blue Colour Boost,220h,4,f32
+Field224,224h,4,f32
+Field228,228h,4,f32
+Field22C,22Ch,4,f32
+Field230,230h,4,f32
+Field234,234h,4,f32
+Field238,238h,4,f32
+Field23C,23Ch,4,f32
+Glare Length,240h,4,f32
+Glare Chromatic Abberation,244h,4,f32
+Glare Direction,248h,4,f32
+Glare Mode,24Ch,4,u32
+Unknown Section,250h,64,struct UnknownParams
+Field250,250h,1,enum Boolean
+Field251,251h,4,u32
+Field255,255h,4,f32
+Field259,259h,4,f32
+Field25D,25Dh,4,f32
+EnableDOF,261h,1,enum Boolean
+DOF_FocalPlane,262h,4,f32
+DOF_NearBlurPlane,266h,4,f32
+DOF_FarBlurPlane,26Ah,4,f32
+DOF_FarBlurLimit,26Eh,4,f32
+DOF_BlurScale,272h,4,f32
+DOF_GaussType,276h,4,u32
+EnableSSAO,27Ah,1,enum Boolean
+SSAO_OccluderRadius,27Bh,4,f32
+SSAO_FallOffRadius,27Fh,4,f32
+SSAO_BlurScale,283h,4,f32
+SSAO_Brightness,287h,4,f32
+SSAO_DepthRange,28Bh,4,f32
+Disable Unknown Flagged Section,28Fh,1,enum Boolean
+Field Shadow Section,290h,32,struct ShadowParams
+Field Shadow Far Clip,290h,4,f32
+Field294,294h,4,f32
+Character Shadow Transparency Factor,298h,4,f32
+Field29C,29Ch,4,f32
+Field2A0,2A0h,4,u32
+Field Shadow Near Clip,2A4h,4,f32
+Field Shadow Darkness,2A8h,4,f32
+Field2AC[0],2ACh,1,enum Boolean
+Field2AC[1],2ADh,1,enum Boolean
+Field2AC[2],2AEh,1,enum Boolean
+Field2AC[3],2AFh,1,enum Boolean
+Unknown Royal Params,2B0h,16,struct UnknownRoyalParams
+Shadow Colour Red,2B0h,4,f32
+Shadow Colour Green,2B4h,4,f32
+Shadow Colour Blue,2B8h,4,f32
+Shadow Colour Alpha,2BCh,4,f32
+Color Correction Section,2C0h,21,struct ColorParams
+Display Color Grading,2C0h,1,enum Boolean
+Cyan,2C1h,4,f32
+Magenta,2C5h,4,f32
+Yellow,2C9h,4,f32
+Dodge,2CDh,4,f32
+Burn,2D1h,4,f32
+Second Unknown Section,2D5h,41,struct UnknownParams2
+LightMapR,2D5h,4,f32
+LightMapG,2D9h,4,f32
+LightMapB,2DDh,4,f32
+LightMapA,2E1h,4,f32
+Enable Outline,2E5h,1,enum Boolean
+OutlineRange,2E6h,4,f32
+OutlineWidth,2EAh,4,f32
+Character Outline Brightness,2EEh,4,f32
+Field27F,2F2h,4,f32
+Field284,2F6h,4,f32
+ReflectionHeight,2FAh,4,f32
+Physics Section,2FEh,34,struct PhysicsParams
+Enable Physics Chunk,2FEh,1,enum Boolean
+Gravity,2FFh,4,f32
+EnableWind,303h,1,enum Boolean
+WindDirectionX,304h,4,f32
+WindDirectionY,308h,4,f32
+WindDirectionZ,30Ch,4,f32
+WindPowerDatums,310h,4,f32
+WindPowerRange,314h,4,f32
+WindCycleDatums,318h,4,f32
+WindCycleRange,31Ch,4,f32
+Sky Coloring,320h,4,struct SkyParams
+Sky Red,320h,1,u8
+Sky Green,321h,1,u8
+Sky Blue,322h,1,u8
+Sky Alpha,323h,1,u8
