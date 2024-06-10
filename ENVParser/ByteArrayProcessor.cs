@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ENVParser
+﻿namespace ENVParser
 {
     internal class ByteArrayProcessor
     {
         public object ProcessByteArray(byte[] byteArray, int startIndex, int length, string fieldType)
         {
             byte[] slicedBytes = new byte[length];
-            Array.Copy(byteArray, startIndex, slicedBytes, 0,length);
+            Array.Copy(byteArray, startIndex, slicedBytes, 0, length);
 
-            switch (fieldType) {
+            switch (fieldType)
+            {
                 case "enum Boolean":
                     return BitConverter.ToBoolean(slicedBytes);
                 case "f32":
@@ -23,7 +17,7 @@ namespace ENVParser
                     {
                         Array.Reverse(slicedBytes); // Reverse bytes if little endian
                     }
-                    return BitConverter.ToSingle(slicedBytes,0);
+                    return BitConverter.ToSingle(slicedBytes, 0);
                 case "u32":
                     if (BitConverter.IsLittleEndian)
                     {

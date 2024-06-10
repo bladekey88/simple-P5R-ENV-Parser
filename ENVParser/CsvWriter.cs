@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ENVParser
+﻿namespace ENVParser
 {
     internal class CsvWriter
     {
-        public static void WriteToFile(string filePath, List<string>data) {
+        public static void WriteToFile(string filePath, List<string> data)
+        {
 
-            string outputDirectory = Path.GetDirectoryName(filePath);
-            if (!Directory.Exists(outputDirectory) && outputDirectory != "") {
+            if (string.IsNullOrEmpty(filePath))
+            {
+                throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");
+            }
+
+            string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
+            
+            if (!Directory.Exists(outputDirectory) && !string.IsNullOrEmpty(outputDirectory))
+            {
                 Directory.CreateDirectory(outputDirectory);
             }
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 
 namespace ENVParser
 {
@@ -28,33 +22,26 @@ namespace ENVParser
             var entries = new List<DataDictionaryEntry>();
             var assembly = Assembly.GetExecutingAssembly();
 
-            Stream? stream = assembly.GetManifestResourceStream(resourceName);
-
-            if (stream != null)
+            // Load resource
+            Stream stream = assembly.GetManifestResourceStream(resourceName) ?? throw new Exception($"Resource {resourceName} not found.");
+            try
             {
-                try
+                using StreamReader reader = new(stream);
+                string? line = reader.ReadLine();
+                while ((line = reader.ReadLine()) is not null)
                 {
-                    using StreamReader reader = new(stream);
-                    // Skip header
-                    string line = reader.ReadLine();
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        var parts = line.Split(',');
-                        string fieldName = parts[0];
-                        var hexAddressAll = parts[1].Split("h");
-                        int hexAddress = Convert.ToInt32(hexAddressAll[0], 16);
-                        int fieldLength = int.Parse(parts[2]);
-                        string fieldType = parts[3];
-                        var entry = new DataDictionaryEntry(fieldName, hexAddress, fieldLength, fieldType);
-                        entries.Add(entry);
-                    }
+                    var parts = line.Split(',');
+                    string fieldName = parts[0];
+                    var hexAddressAll = parts[1].Split("h");
+                    int hexAddress = Convert.ToInt32(hexAddressAll[0], 16);
+                    int fieldLength = int.Parse(parts[2]);
+                    string fieldType = parts[3];
+                    var entry = new DataDictionaryEntry(fieldName, hexAddress, fieldLength, fieldType);
+                    entries.Add(entry);
                 }
-                finally {stream.Dispose();}
             }
-            else
-            {
-                throw new Exception($"Resource {resourceName} not found.");
-            }
+            finally { stream.Dispose(); }
+
             return entries;
         }
     }

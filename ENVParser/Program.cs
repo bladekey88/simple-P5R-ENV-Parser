@@ -1,7 +1,5 @@
 ﻿
 using ENVParser;
-using System.Reflection;
-using System.Xml;
 using static ENVParser.DataDictionary;
 internal class Program
 {
@@ -20,7 +18,8 @@ internal class Program
     }
 
 
-    private static void ProcessEnvFile(string filePath) { 
+    private static void ProcessEnvFile(string filePath)
+    {
         // Set up Data Dictionary
         string resourceName = "ENVParser.Resources.ENV_FieldHexMapping.csv";
         List<DataDictionaryEntry> dataDictionary = DataDictionary.LoadDataDictionary(resourceName);
@@ -34,18 +33,18 @@ internal class Program
         List<string> envFields = [];
         foreach (DataDictionaryEntry entry in dataDictionary)
         {
-            if (!entry.FieldType.Contains("struct",StringComparison.OrdinalIgnoreCase))
-            {   
+            if (!entry.FieldType.Contains("struct", StringComparison.OrdinalIgnoreCase))
+            {
                 ByteArrayProcessor processor = new();
                 object result = processor.ProcessByteArray(envFile, entry.HexAddress, entry.FieldLength, entry.FieldType);
                 string output = $"{entry.FieldName},{result},{entry.FieldType},";
                 envFields.Add(output);
-                }
+            }
         }
 
         if (envFields.Count > 0)
         {
-            string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV",".csv");
+            string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".csv");
             CsvWriter.WriteToFile(outputFile, envFields);
         }
     }
