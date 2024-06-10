@@ -8,7 +8,9 @@ internal class Program
     private static void Main(string[] args)
     {
         if (args.Length == 0)
-        {            
+        {
+            Console.WriteLine("Please drop an ENV file onto the executable or pass it as a cmd argument.");
+            Console.WriteLine();
             return;
         }
 
