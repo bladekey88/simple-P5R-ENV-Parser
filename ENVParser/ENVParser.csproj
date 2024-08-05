@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\ENV_FieldHexMapping.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
 

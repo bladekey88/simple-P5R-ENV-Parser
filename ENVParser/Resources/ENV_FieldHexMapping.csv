@@ -3,14 +3,14 @@ ENV Header,0h,16,struct Header
 ENV Params,10h,792,struct EnvParams
 Enable Field Model Section,11h,1,enum Boolean
 Field Model Section,12h,280,struct FieldModelParams
-Field Model Diffuse Red,12h,4,f32
-Field Model Diffuse Green,16h,4,f32
-Field Model Diffuse Blue,1Ah,4,f32
-Field Model Diffuse Alpha,1Eh,4,f32
-Field Model Ambient Red,22h,4,f32
-Field Model Ambient Green,26h,4,f32
-Field Model Ambient Blue,2Ah,4,f32
-Field Model Ambient Alpha,2Eh,4,f32
+Field Model Ambient Red,12h,4,f32
+Field Model Ambient Green,16h,4,f32
+Field Model Ambient Blue,1Ah,4,f32
+Field Model Ambient Alpha,1Eh,4,f32
+Field Model Diffuse Red,22h,4,f32
+Field Model Diffuse Green,26h,4,f32
+Field Model Diffuse Blue,2Ah,4,f32
+Field Model DiffuseAlpha,2Eh,4,f32
 Field Model Specular Red,32h,4,f32
 Field Model Specular Green,36h,4,f32
 Field Model Specular Blue,3Ah,4,f32
@@ -19,25 +19,25 @@ Field Model Emissive Red,42h,4,f32
 Field Model Emissive Green,46h,4,f32
 Field Model Emissive Blue,4Ah,4,f32
 Field Model Emissive Alpha,4Eh,4,f32
-Field42,52h,4,f32
-Field46,56h,4,f32
-Field4A,5Ah,4,f32
-Field4E,5Eh,4,f32
-Field Model Light X (Unsure),62h,4,f32
-Field Model Light Y (Unsure),66h,4,f32
-Field Model Light Z (Unsure),6Ah,4,f32
+Field52,52h,4,f32
+Field56,56h,4,f32
+Field5A,5Ah,4,f32
+Field5E,5Eh,4,f32
+Field Model Light X,62h,4,f32
+Field Model Light Y,66h,4,f32
+Field Model Light Z,6Ah,4,f32
 Unused Texture Adjustment Section,6Eh,188,struct FieldModelReserve
 Reserve[47],6Eh,188,f32
 Enable Character Model Section,12Bh,1,enum Boolean
 Character Model Section,12Ch,104,struct CharModelParams
-Character Model Diffuse Red,12Ch,4,f32
-Character Model Diffuse Green,130h,4,f32
-Character Model Diffuse Blue,134h,4,f32
-Character Model Diffuse Alpha?,138h,4,f32
-Character Model Ambient Red,13Ch,4,f32
-Character Model Ambient Green,140h,4,f32
-Character Model Ambient Blue,144h,4,f32
-Character Model Ambient Alpha?,148h,4,f32
+Character Model Ambient Red,12Ch,4,f32
+Character Model Anmbient Green,130h,4,f32
+Character Model Ambient Blue,134h,4,f32
+Character Model Ambient Alpha,138h,4,f32
+Character Model Diffuse Red,13Ch,4,f32
+Character Model Diffuse Green,140h,4,f32
+Character Model Diffuse Blue,144h,4,f32
+Character Model Ambient Alpha,148h,4,f32
 Character Model Specular Red,14Ch,4,f32
 Character Model Specular Green,150h,4,f32
 Character Model Specular Blue,154h,4,f32
@@ -66,14 +66,14 @@ Fog Strength (Far),19Ch,4,f32
 Fog Red,1A0h,4,f32
 Fog Green,1A4h,4,f32
 Fog Blue,1A8h,4,f32
-Fog Alpha,1ACh,4,f32
+Fog Opacity,1ACh,4,f32
 Enable Floor Fog,1B0h,1,enum Boolean
 Floor Fog Upper Bound,1B1h,4,f32
 Floor Fog Lower Bound,1B5h,4,f32
 Floor Fog Red,1B9h,4,f32
 Floor Fog Green,1BDh,4,f32
 Floor Fog Blue,1C1h,4,f32
-Floor Fog Alpha,1C5h,4,f32
+Floor Fog Opacity,1C5h,4,f32
 Lighting Section,1C9h,135,struct LightingParams
 Enable HDR/Graphic Output,1C9h,1,enum Boolean
 Enable ToneMap/Bloom,1CAh,1,enum Boolean
@@ -108,7 +108,7 @@ Field234,234h,4,f32
 Field238,238h,4,f32
 Field23C,23Ch,4,f32
 Glare Length,240h,4,f32
-Glare Chromatic Abberation,244h,4,f32
+Glare Chromatic Aberration,244h,4,f32
 Glare Direction,248h,4,f32
 Glare Mode,24Ch,4,u32
 Unknown Section,250h,64,struct UnknownParams
@@ -134,15 +134,15 @@ Disable Unknown Flagged Section,28Fh,1,enum Boolean
 Field Shadow Section,290h,32,struct ShadowParams
 Field Shadow Far Clip,290h,4,f32
 Field294,294h,4,f32
-Character Shadow Transparency Factor,298h,4,f32
+Shadow Ambient Brightness,298h,4,f32
 Field29C,29Ch,4,f32
 Field2A0,2A0h,4,u32
 Field Shadow Near Clip,2A4h,4,f32
 Field Shadow Darkness,2A8h,4,f32
-Field2AC[0],2ACh,1,enum Boolean
-Field2AC[1],2ADh,1,enum Boolean
-Field2AC[2],2AEh,1,enum Boolean
-Field2AC[3],2AFh,1,enum Boolean
+Field2AC,2ACh,1,enum Boolean
+Field2AD,2ADh,1,enum Boolean
+Field2AE,2AEh,1,enum Boolean
+Field2AF,2AFh,1,enum Boolean
 Unknown Royal Params,2B0h,16,struct UnknownRoyalParams
 Shadow Colour Red,2B0h,4,f32
 Shadow Colour Green,2B4h,4,f32
@@ -164,11 +164,11 @@ Enable Outline,2E5h,1,enum Boolean
 OutlineRange,2E6h,4,f32
 OutlineWidth,2EAh,4,f32
 Character Outline Brightness,2EEh,4,f32
-Field27F,2F2h,4,f32
-Field284,2F6h,4,f32
+Field2F2,2F2h,4,f32
+Field2F6,2F6h,4,f32
 ReflectionHeight,2FAh,4,f32
 Physics Section,2FEh,34,struct PhysicsParams
-Enable Physics Chunk,2FEh,1,enum Boolean
+Enable Physics Section,2FEh,1,enum Boolean
 Gravity,2FFh,4,f32
 EnableWind,303h,1,enum Boolean
 WindDirectionX,304h,4,f32

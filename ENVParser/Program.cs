@@ -25,7 +25,6 @@ internal class Program
         List<DataDictionaryEntry> dataDictionary = DataDictionary.LoadDataDictionary(resourceName);
 
         // Read ENV Data
-        //string filePath = "C:\\Users\\aruna\\Desktop\\P5R\\Modding\\P5R_DATA\\ENV\\ENV0000_000_000.ENV";
         ParseEnvFile envData = new(filePath);
         byte[] envFile = envData.ReadFile();
 
