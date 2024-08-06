@@ -32,8 +32,7 @@ internal class Program
 
     private static void ProcessEnvFile(string filePath, string outputFileType = "json")
     {
-        
-        
+
         // Set up Data Dictionary
         string resourceName = "ENVParser.Resources.ENV_FieldHexMapping.csv";
         List<DataDictionaryEntry> dataDictionary = DataDictionary.LoadDataDictionary(resourceName);

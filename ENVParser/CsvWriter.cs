@@ -11,7 +11,7 @@
             }
 
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
-            
+
             if (!Directory.Exists(outputDirectory) && !string.IsNullOrEmpty(outputDirectory))
             {
                 Directory.CreateDirectory(outputDirectory);
