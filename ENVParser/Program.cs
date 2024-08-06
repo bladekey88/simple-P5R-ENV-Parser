@@ -7,19 +7,33 @@ internal class Program
     {
         if (args.Length == 0)
         {
-            Console.WriteLine("Please drop an ENV file onto the executable or pass it as a cmd argument.");
+            Console.WriteLine("Please either drop an env file on the executable or provide an ENV file path as a command-line argument.");
+            Console.WriteLine("Optionally, provide an output file type as the second argument (json or csv).");
             Console.WriteLine();
             return;
         }
 
+        // Assign command line arguments as necessary and then pass to method
         string filePath = args[0];
 
-        ProcessEnvFile(filePath);
+        if (args.Length == 2)
+        {
+            string outputFileType = args[1];
+            ProcessEnvFile(filePath, outputFileType);
+        }
+        else
+        {
+            ProcessEnvFile(filePath);
+        }
+        return;
+
     }
 
 
-    private static void ProcessEnvFile(string filePath)
+    private static void ProcessEnvFile(string filePath, string outputFileType = "json")
     {
+        
+        
         // Set up Data Dictionary
         string resourceName = "ENVParser.Resources.ENV_FieldHexMapping.csv";
         List<DataDictionaryEntry> dataDictionary = DataDictionary.LoadDataDictionary(resourceName);
@@ -41,10 +55,16 @@ internal class Program
             }
         }
 
+        // Write the file out
         if (envFields.Count > 0)
-        {
-            string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".csv");
-            CsvWriter.WriteToFile(outputFile, envFields);
-        }
+            if (outputFileType.Equals("csv", StringComparison.OrdinalIgnoreCase))
+            {
+                {
+                    string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".csv");
+                    CsvWriter.WriteToFile(outputFile, envFields);
+                    Console.WriteLine($"CSV file created at: '{outputFile}'");
+                }
+            }
+            else { Console.WriteLine("JSON Functionality has not been implemented"); }
     }
 }
