@@ -13,6 +13,13 @@ internal class Program
             return;
         }
 
+
+        const string DD_FILE_PATH = "ENVParser.Resources.ENV_FieldHexMapping.csv";
+        
+        // Set up Data Dictionary
+        List<DataDictionary2.DataDictionaryEntry> entries = DataDictionary2.LoadDataDictionary(DD_FILE_PATH);       
+        return;
+
         // Assign command line arguments as necessary and then pass to method
         string filePath = args[0];
 
