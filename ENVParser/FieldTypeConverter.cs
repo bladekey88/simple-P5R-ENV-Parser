@@ -1,11 +1,13 @@
 ﻿namespace ENVParser
 {
-    internal class ByteArrayProcessor
+    public class FieldTypeConverter
     {
-        public object ProcessByteArray(byte[] byteArray, int startIndex, int length, string fieldType)
+        public object ConvertBytes(string fieldType, byte[] slicedBytes)
         {
-            byte[] slicedBytes = new byte[length];
-            Array.Copy(byteArray, startIndex, slicedBytes, 0, length);
+            if (fieldType.StartsWith("struct", StringComparison.OrdinalIgnoreCase))
+            {
+                return null;
+            }
 
             switch (fieldType)
             {
@@ -30,5 +32,6 @@
                     throw new ArgumentException($"Unsupported Field Type: {fieldType}");
             }
         }
+
     }
 }

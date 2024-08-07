@@ -5,10 +5,16 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>Ryuji.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\ENV_FieldHexMapping.csv" />
+    <None Remove="Resources\Ryuji.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Ryuji.ico" />
   </ItemGroup>
 
   <ItemGroup>

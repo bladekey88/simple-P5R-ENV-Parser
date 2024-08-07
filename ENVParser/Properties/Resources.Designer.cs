@@ -61,7 +61,7 @@ namespace ENVParser.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to FieldName,HexAddress,FieldLength,FieldType
+        ///   Looks up a localized string similar to FieldName,HexAddress,FieldLength,FieldTypeConverter
         ///ENV Header,0h,16,struct Header
         ///ENV Params,10h,792,struct EnvParams
         ///Enable Field Model Section,11h,1,enum Boolean

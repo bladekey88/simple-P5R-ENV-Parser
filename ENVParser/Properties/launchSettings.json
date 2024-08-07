@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ENVParser": {
-      "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\aruna\\Desktop\\P5R\\Modding\\P5R_DATA\\ENV\\ENV0000_000_000.ENV\"\r\n\"csv\""
-    }
-  }
-}
