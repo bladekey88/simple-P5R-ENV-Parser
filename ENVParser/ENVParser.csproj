@@ -5,7 +5,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <ApplicationIcon>Ryuji.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Ryuji.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,13 +14,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Ryuji.ico" />
+    <Content Include="Resources\Ryuji.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\ENV_FieldHexMapping.csv">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Ryuji.ico" />
   </ItemGroup>
 
   <ItemGroup>
