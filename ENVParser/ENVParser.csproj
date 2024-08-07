@@ -5,16 +5,23 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ApplicationIcon>Resources\Ryuji.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Resources\ENV_FieldHexMapping.csv" />
+    <None Remove="Resources\Ryuji.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\Ryuji.ico" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Resources\ENV_FieldHexMapping.csv">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Ryuji.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +37,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="33.0.1" />
   </ItemGroup>
 
 </Project>
