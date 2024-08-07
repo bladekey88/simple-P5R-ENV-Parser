@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "master","Data-Dictionary-CSVHelper" ]
+    branches: [ "master" ]
   pull_request:
-    branches: [ "master","Data-Dictionary-CSVHelper" ]
+    branches: [ "master" ]
 
 jobs:
   build:
