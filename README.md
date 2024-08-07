@@ -7,4 +7,7 @@ This is a small script that will output the values from an ENV to a csv file wit
 To run, either drop an ENV file onto the executable and the csv will be generated alongside it, or from the commandline, pass the full env path as an argument. Make sure that the file extension (.ENV) is included.
 
 e.g.
-ENVParser.exe -path-to-env-file
+ENVParser.exe -path-to-env-file -filetype
+  - filetype can either be csv or json
+  - currently only csv is implemented
+  
