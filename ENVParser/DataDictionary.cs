@@ -31,7 +31,7 @@ namespace ENVParser
             var assembly = Assembly.GetExecutingAssembly();
             Stream stream = assembly.GetManifestResourceStream(DD_FILE_PATH) ?? throw new Exception($"Resource {DD_FILE_PATH} not found.");
 
-            // Create a reader, then parse with csvHElper
+            // Create a reader, then parse with csvHelper
             using var reader = new StreamReader(stream);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
             var records = csv.GetRecords<DataDictionaryEntry>();

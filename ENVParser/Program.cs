@@ -34,8 +34,15 @@ internal class Program
 
         // Process the ENV data against the dictionary
         var parser = new EnvFileParser(entries);
-        Dictionary<string, (object,string)> extractedValues = parser.ExtractValues(envFile);
+        Dictionary<string, (object, string, int, int)> extractedValues = parser.ExtractValues(envFile);
 
+        if (args.Length == 1)
+        {
+            string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.json");
+            JsonExporter exporter = new();
+            exporter.Export(outputFile, extractedValues);
+            Console.WriteLine($"\n\tJSON file created at: '{outputFile}'");
+        }
         if (args.Length == 2)
         {
             string outputFileType = args[1];
@@ -43,10 +50,17 @@ internal class Program
             // For CSV Checking
             if (outputFileType.Equals("csv", StringComparison.OrdinalIgnoreCase))
             {
-                string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".csv");
+                string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.csv");
                 CsvExporter exporter = new();
                 exporter.Export(outputFile, extractedValues);
-                Console.WriteLine($"CSV file created at: '{outputFile}'");
+                Console.WriteLine($"\n\tCSV file created at: '{outputFile}'");
+            }
+            else if (outputFileType.Equals("json", StringComparison.OrdinalIgnoreCase))
+            {
+                string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.json");
+                JsonExporter exporter = new();
+                exporter.Export(outputFile, extractedValues);
+                Console.WriteLine($"\n\tJSON file created at: '{outputFile}'");
             }
         }
         return;

@@ -21,7 +21,7 @@
             "Field Model Emissive Blue",
             "Field Model Emissive Alpha",
             "Character Model Ambient Red",
-            "Character Model Anmbient Green",
+            "Character Model Ambient Green",
             "Character Model Ambient Blue",
             "Character Model Ambient Alpha",
             "Character Model Diffuse Red",

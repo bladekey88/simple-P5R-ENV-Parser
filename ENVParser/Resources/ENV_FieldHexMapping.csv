@@ -1,5 +1,9 @@
 FieldName,HexAddress,FieldLength,FieldType
 ENV Header,0h,16,struct Header
+File Magic,0h,4,u32
+GFS Version,4h,4,u32,
+File Type,8h,4,u32,
+Field0C,Ch,4,u32
 ENV Params,10h,792,struct EnvParams
 Enable Field Model Section,11h,1,enum Boolean
 Field Model Section,12h,280,struct FieldModelParams
@@ -31,7 +35,7 @@ Reserve[47],6Eh,188,f32
 Enable Character Model Section,12Bh,1,enum Boolean
 Character Model Section,12Ch,104,struct CharModelParams
 Character Model Ambient Red,12Ch,4,f32
-Character Model Anmbient Green,130h,4,f32
+Character Model Ambient Green,130h,4,f32
 Character Model Ambient Blue,134h,4,f32
 Character Model Ambient Alpha,138h,4,f32
 Character Model Diffuse Red,13Ch,4,f32

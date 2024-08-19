@@ -11,16 +11,16 @@
             _fieldTypeConverter = new FieldTypeConverter(); // Initialize the converter
         }
 
-        public Dictionary<string, (object, string)> ExtractValues(byte[] fileBytes)
+        public Dictionary<string, (object, string, int, int)> ExtractValues(byte[] fileBytes)
         {
-            var extractedValues = new Dictionary<string, (object, string)>();
+            var extractedValues = new Dictionary<string, (object, string, int, int)>();
             foreach (var field in _dataDictionary)
             {
                 int startIndex = field.GetHexAddressAsInt();
                 int length = Convert.ToInt32(field.FieldLength);
                 byte[] fieldBytes = fileBytes.Skip(startIndex).Take(length).ToArray();
                 object value = _fieldTypeConverter.ConvertBytes(field.FieldType, fieldBytes);
-                extractedValues[field.FieldName] = (value,field.FieldType);
+                extractedValues[field.FieldName] = (value, field.FieldType, startIndex, length);
             }
             return extractedValues;
         }

@@ -13,7 +13,7 @@ namespace ENVParser
             _validFieldsForRGBValues = RGBFieldNameProvider.GetValidFields();
         }
 
-        public void Export(string filePath, Dictionary<string, (object,string)> extractedData)
+        public void Export(string filePath, Dictionary<string, (object, string, int, int)> extractedData)
         {
 
             if (string.IsNullOrEmpty(filePath))
@@ -22,11 +22,6 @@ namespace ENVParser
             }
 
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
-
-            if (!Directory.Exists(outputDirectory) && !string.IsNullOrEmpty(outputDirectory))
-            {
-                Directory.CreateDirectory(outputDirectory);
-            }
 
             var csvData = extractedData.Select(data => new CsvOutput
             {

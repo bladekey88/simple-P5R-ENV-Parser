@@ -9,6 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ByteArrayProcessor_old.cs" />
+    <Compile Remove="DataDictionary_old.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Resources\ENV_FieldHexMapping.csv" />
     <None Remove="Resources\Ryuji.ico" />
   </ItemGroup>
@@ -22,6 +27,11 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Ryuji.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="ByteArrayProcessor_old.cs" />
+    <None Include="DataDictionary_old.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +51,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="33.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>
