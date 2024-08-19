@@ -5,6 +5,7 @@ GFS Version,4h,4,u32,
 File Type,8h,4,u32,
 Field0C,Ch,4,u32
 ENV Params,10h,792,struct EnvParams
+Field10,10h,1,u8
 Enable Field Model Section,11h,1,enum Boolean
 Field Model Section,12h,280,struct FieldModelParams
 Field Model Ambient Red,12h,4,f32
@@ -32,6 +33,7 @@ Field Model Light Y,66h,4,f32
 Field Model Light Z,6Ah,4,f32
 Unused Texture Adjustment Section,6Eh,188,struct FieldModelReserve
 Reserve[47],6Eh,188,f32
+Field12A,12Ah,1,u8
 Enable Character Model Section,12Bh,1,enum Boolean
 Character Model Section,12Ch,104,struct CharModelParams
 Character Model Ambient Red,12Ch,4,f32
@@ -187,3 +189,10 @@ Sky Red,320h,1,u8
 Sky Green,321h,1,u8
 Sky Blue,322h,1,u8
 Sky Alpha,323h,1,u8
+ENV Footer,324h,21,struct ENVFooter
+ENV Footer[0],324h,4,u32
+ENV Footer[1],328h,4,u32
+ENV Footer[2],32Ch,4,u32
+ENV Footer[3],330h,4,u32
+ENV Footer[4],334h,4,u32
+ENV Footer[5],338h,1,u8

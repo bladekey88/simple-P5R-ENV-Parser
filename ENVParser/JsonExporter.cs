@@ -31,7 +31,7 @@ namespace ENVParser
                 // unpack tuple and save into appropriate fields 
                 var (fieldValue, fieldType, start, length) = data.Value;
 
-                // Use a stack, if a struct is encountered add it to stack, remove it from stack when field is greater than length
+                // Use a stack since this maintains add order, if a struct is encountered add it to stack, remove it from stack when field is greater than length
                 if (fieldType.StartsWith("struct", StringComparison.OrdinalIgnoreCase))
                 {
                     var newSection = new Section { Name = data.Key, Length = length, StartIndex = start };
@@ -79,25 +79,8 @@ namespace ENVParser
             {
                 sw.Write(json);
             }
-            
-            // TODO delete
-            //// Serialise data to JSON. Due to complex Item1 field, doing null check intially and substituting will default value where necessary
-            //var jsonData = extractedData.Select(data => new JsonOutput
-            //{
-            //    FieldName = data.Key,
-            //    FieldValue = data.Value.Item1 != null ? JToken.FromObject(data.Value.Item1) : null,
-            //    RGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value.Item1) : null,
-            //    FieldType = data.Value.Item2,
-            //}).ToList();
-
-            //// Ignore Null Values
-            //var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            //string json = JsonConvert.SerializeObject(jsonData, Formatting.Indented,settings);  
-            //using StreamWriter sw = new(filePath); 
-            //{
-            //    sw.Write(json);
-            //}
         }
+
 
         // Defines the structure of JSON records
         private class JsonOutput

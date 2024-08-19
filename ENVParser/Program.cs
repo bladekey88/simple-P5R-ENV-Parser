@@ -8,8 +8,9 @@ internal class Program
         if (args.Length == 0)
         {
             Console.WriteLine("\nUsage: ENVParser <file path> <csv|json>(optional)");
-            Console.WriteLine("\n\t - Please either drop an env file on the executable or provide an ENV file path as a command-line argument.");
-            Console.WriteLine("\t - Optionally, provide an output file type as the second argument (json or csv).");
+            Console.WriteLine("\n\t - Either drop an ENV or ENV.json file on the executable, or provide a file path as a command-line argument.");
+            Console.WriteLine("\t - If proving an ENV file, you can optionally specify an output file type as the second argument.");
+            Console.WriteLine("\t   JSON and CSV are supported for export (JSON is the default).");
             return;
         }
 
@@ -20,9 +21,18 @@ internal class Program
             Console.WriteLine($"The specified file does not exist: '{filePath}'");
             return;
         }
+
+        if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            string jsonString = File.ReadAllText(filePath);
+            var fields = JsonImporter.DeserialiseJson(jsonString);
+            return;
+        }
+
+
         if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase))
         {
-            Console.WriteLine($"The file must be an .ENV file: '{Path.GetExtension(filePath)}' provided");
+            Console.WriteLine($"The file must be an .ENV or an .ENV.json file: '{Path.GetExtension(filePath)}' provided");
             return;
         }
 
