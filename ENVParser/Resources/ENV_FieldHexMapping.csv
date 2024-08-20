@@ -193,6 +193,6 @@ ENV Footer,324h,21,struct ENVFooter
 Fied324,324h,4,u32
 Fied328,328h,4,u32
 Field32C,32Ch,4,u32
-Field338,330h,4,u32
+Field330,330h,4,u32
 Field334,334h,4,u32
-Field328,338h,1,u8
+Field338,338h,1,u8
