@@ -190,9 +190,9 @@ Sky Green,321h,1,u8
 Sky Blue,322h,1,u8
 Sky Alpha,323h,1,u8
 ENV Footer,324h,21,struct ENVFooter
-ENV Footer[0],324h,4,u32
-ENV Footer[1],328h,4,u32
-ENV Footer[2],32Ch,4,u32
-ENV Footer[3],330h,4,u32
-ENV Footer[4],334h,4,u32
-ENV Footer[5],338h,1,u8
+Fied324,324h,4,u32
+Fied328,328h,4,u32
+Field32C,32Ch,4,u32
+Field338,330h,4,u32
+Field334,334h,4,u32
+Field328,338h,1,u8
