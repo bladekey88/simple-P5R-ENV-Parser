@@ -19,7 +19,7 @@
                 int startIndex = field.GetHexAddressAsInt();
                 int length = Convert.ToInt32(field.FieldLength);
                 byte[] fieldBytes = fileBytes.Skip(startIndex).Take(length).ToArray();
-                object value = _fieldTypeConverter.ConvertBytes(field.FieldType, fieldBytes);
+                object value = _fieldTypeConverter.ConvertFrom(field.FieldType, fieldBytes);
                 extractedValues[field.FieldName] = (value, field.FieldType, startIndex, length);
             }
             return extractedValues;

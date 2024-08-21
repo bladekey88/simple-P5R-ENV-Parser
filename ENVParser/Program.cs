@@ -4,7 +4,7 @@ using static ENVParser.DataDictionary;
 internal class Program
 {
     private static void Main(string[] args)
-    {
+    {             
         if (args.Length == 0)
         {
             Console.WriteLine("\nUsage: ENVParser <file path> <csv|json>(optional)");
@@ -14,36 +14,46 @@ internal class Program
             return;
         }
 
-        // Check ENV file
+        // Check file exist
         string filePath = args[0];
         if (!File.Exists(filePath))
         {
             Console.WriteLine($"The specified file does not exist: '{filePath}'");
             return;
         }
+        
 
-        if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
-        {
-            string jsonString = File.ReadAllText(filePath);
-            var fields = JsonImporter.DeserialiseJson(jsonString);
-            return;
-        }
-
-
-        if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase))
+        if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase) && !Path.GetExtension(filePath).Equals(".json",StringComparison.OrdinalIgnoreCase ))
         {
             Console.WriteLine($"The file must be an .ENV or an .ENV.json file: '{Path.GetExtension(filePath)}' provided");
             return;
         }
 
-        // Parse ENV File
+        // Set up Data Dictionary            
+        List<DataDictionaryEntry> dataDictionaryEntries = DataDictionary.LoadDataDictionary();
+        var parser = new EnvFileParser(dataDictionaryEntries);
+
+        // Handle JSON first
+        if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            try
+            {
+                string jsonString = File.ReadAllText(filePath);
+                var fields = JsonImporter.DeserialiseJson(jsonString);
+                string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV.json", ".ENV");
+                JsonImporter.WriteJsonToENV(outputFile,fields, dataDictionaryEntries);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+                return;
+        }
+
+        // else parse ENV File
         byte[] envFile = File.ReadAllBytes(filePath);
 
-        // Set up Data Dictionary            
-        List<DataDictionaryEntry> entries = DataDictionary.LoadDataDictionary();
-
-        // Process the ENV data against the dictionary
-        var parser = new EnvFileParser(entries);
+        // Process the ENV data against the dictionary        
         Dictionary<string, (object, string, int, int)> extractedValues = parser.ExtractValues(envFile);
 
         if (args.Length == 1)

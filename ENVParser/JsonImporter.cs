@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using System.Collections;
 using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Text.Json;
@@ -18,11 +19,11 @@ namespace ENVParser
             var allFields = deserialisedJson.SelectMany(envStruct =>
             {
                 // Flatten fields from the direct attached to structural nodes
-                // This is the 4 header field, and the boolean toggle fields in the param section
+                // This is the 4 header field, and the boolean toggle fields in the param section and the footer
                 var fieldsFromEnv = envStruct.Fields;
 
-                // Recursively flatten fields from child nodes of ENV Param section 
-                // These are the actual data fields - do this recursively due to Field Model Section sub struct
+                // Flatten fields from child and grandchild nodes of ENV Param section (no need to go deeper)
+                // These are the actual data fields - do this due to Field Model Section sub struct
                 var fieldFromEnvParamSection = envStruct.Children.SelectMany(child =>
                 {
                     var fieldsFromChild = child.Fields;
@@ -64,12 +65,60 @@ namespace ENVParser
             return allFields;
         }
 
-        public static void ParseJsonToENV(List<Field> deserialisedJsonFields)
+        public static void WriteJsonToENV(string filePath, List<Field> deserialisedJsonFields, List<DataDictionary.DataDictionaryEntry> entries)
         {
-            // Create a stack
-            Stack<Object> stack = new();
+            // TODO - need to refactor to maintain correct order. 
+            // TODO - create an ENV class that has all of the ENV data in one place for ease of use
             
+            // Check if all required fields are present (by key FieldName)
+            foreach (var field in entries)
+            {
+                if (!deserialisedJsonFields.Any(f => f.FieldName == field.FieldName) && (!field.FieldType.Contains("struct",StringComparison.OrdinalIgnoreCase)))
+                {
+                    throw new InvalidDataException($"Error - Field '{field.FieldName}' is missing from the JSON.");
+                }
+            }
+
+            // Check for duplicate fields in the input list
+            List<string> duplicateFields = deserialisedJsonFields.GroupBy(f => f.FieldName)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+            
+            if (duplicateFields.Any())
+            {
+                throw new InvalidDataException($"Error - Duplicate fields found in the input list: {string.Join(", ",duplicateFields)}");
+            }
+
+            // Check for any extra fields which should not be considered
+            var extraFields = deserialisedJsonFields.Where(f => !entries.Any(e => e.FieldName == f.FieldName)).ToList();
+            if (extraFields.Any())
+            {
+                throw new InvalidDataException($"Error - The following fields are part of the JSON but are not part of the ENV Definition: {string.Join(", ", extraFields.Select(f => f.FieldName))}");
+            }
+
+            Queue outputFields = new();
+            // Write to File
+            foreach (Field field in deserialisedJsonFields) {
+                var fieldValue = field.FieldValue;
+                string fieldType = field.FieldType;                   
+                outputFields.Enqueue(FieldTypeConverter.ConvertToBytes(fieldType,fieldValue));
+            }
+
+            using var fileStream = new FileStream(filePath, FileMode.Create);
+            using var binaryWriter = new BinaryWriter(fileStream);
+            {
+                foreach (var row in outputFields)
+                {
+                    if (row is byte b) { binaryWriter.Write(b); }
+                    else if (row is byte[] bytes) { binaryWriter.Write(bytes); }
+                    else { throw new InvalidOperationException($"Unexpected type: {row.GetType()}"); }
+                }
+            }
+
         }
+
+
 
 
         public class JsonNode
