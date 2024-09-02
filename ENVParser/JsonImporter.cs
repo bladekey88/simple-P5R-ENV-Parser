@@ -1,9 +1,5 @@
-﻿using CsvHelper;
-using System.Collections;
-using System.Diagnostics;
-using System.Reflection.Emit;
+﻿using System.Collections;
 using System.Text.Json;
-using static ENVParser.JsonImporter;
 
 namespace ENVParser
 {
@@ -35,8 +31,9 @@ namespace ENVParser
             }, (envStruct, fields) => fields) // Flatten the result
             .ToList();
 
-            foreach (Field field in allFields) {
-                field.ConvertFieldValue();    
+            foreach (Field field in allFields)
+            {
+                field.ConvertFieldValue();
             }
 
             /* Old Flattening implementation (messy and overly verbose)            
@@ -69,11 +66,11 @@ namespace ENVParser
         {
             // TODO - need to refactor to maintain correct order. 
             // TODO - create an ENV class that has all of the ENV data in one place for ease of use
-            
+
             // Check if all required fields are present (by key FieldName)
             foreach (var field in entries)
             {
-                if (!deserialisedJsonFields.Any(f => f.FieldName == field.FieldName) && (!field.FieldType.Contains("struct",StringComparison.OrdinalIgnoreCase)))
+                if (!deserialisedJsonFields.Any(f => f.FieldName == field.FieldName) && (!field.FieldType.Contains("struct", StringComparison.OrdinalIgnoreCase)))
                 {
                     throw new InvalidDataException($"Error - Field '{field.FieldName}' is missing from the JSON.");
                 }
@@ -84,10 +81,10 @@ namespace ENVParser
                 .Where(g => g.Count() > 1)
                 .Select(g => g.Key)
                 .ToList();
-            
+
             if (duplicateFields.Any())
             {
-                throw new InvalidDataException($"Error - Duplicate fields found in the input list: {string.Join(", ",duplicateFields)}");
+                throw new InvalidDataException($"Error - Duplicate fields found in the input list: {string.Join(", ", duplicateFields)}");
             }
 
             // Check for any extra fields which should not be considered
@@ -99,10 +96,11 @@ namespace ENVParser
 
             Queue outputFields = new();
             // Write to File
-            foreach (Field field in deserialisedJsonFields) {
+            foreach (Field field in deserialisedJsonFields)
+            {
                 var fieldValue = field.FieldValue;
-                string fieldType = field.FieldType;                   
-                outputFields.Enqueue(FieldTypeConverter.ConvertToBytes(fieldType,fieldValue));
+                string fieldType = field.FieldType;
+                outputFields.Enqueue(FieldTypeConverter.ConvertToBytes(fieldType, fieldValue));
             }
 
             using var fileStream = new FileStream(filePath, FileMode.Create);
@@ -173,7 +171,8 @@ namespace ENVParser
                     throw;
                 }
 
-                catch (InvalidDataException ex) {
+                catch (InvalidDataException ex)
+                {
                     Console.WriteLine($"Processing Error: {ex.Message}");
                     Console.WriteLine("\t - Reason: JSON has unexpected 'FieldType': ");
                     Console.WriteLine($"\t - Data: FieldName: '{FieldName}' FieldType: '{FieldType}'");

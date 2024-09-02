@@ -1,10 +1,11 @@
 ﻿
 using ENVParser;
+using ENVParser.Utils;
 using static ENVParser.DataDictionary;
 internal class Program
 {
     private static void Main(string[] args)
-    {             
+    {
         if (args.Length == 0)
         {
             Console.WriteLine("\nUsage: ENVParser <file path> <csv|json>(optional)");
@@ -14,20 +15,37 @@ internal class Program
             return;
         }
 
-        // Check file exist
+        // Check the file exists
         string filePath = args[0];
         if (!File.Exists(filePath))
         {
             Console.WriteLine($"The specified file does not exist: '{filePath}'");
             return;
         }
-        
 
-        if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase) && !Path.GetExtension(filePath).Equals(".json",StringComparison.OrdinalIgnoreCase ))
+        // Only accept ENV or ENV.json files
+        if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase) && !Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
         {
             Console.WriteLine($"The file must be an .ENV or an .ENV.json file: '{Path.GetExtension(filePath)}' provided");
             return;
         }
+
+        // New Version - Call the EnvFile Class to read ENV file
+        EnvFile envFile2 = new();
+        using (FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read))
+        using (BigEndianBinaryReader reader = new(fileStream))
+        {
+            // Call the Read method to populate the envFile instance
+            envFile2.Read(reader);
+        }
+        Console.WriteLine($"EnableFieldModelSection: {envFile2.EnableFieldModelSection}");
+
+        using var stream = new FileStream($"{filePath}.bin", FileMode.Create, FileAccess.Write);
+        using var writer = new BigEndianBinaryWriter(stream);
+        envFile2.Write(writer);
+
+
+        return;
 
         // Set up Data Dictionary            
         List<DataDictionaryEntry> dataDictionaryEntries = DataDictionary.LoadDataDictionary();
@@ -41,13 +59,13 @@ internal class Program
                 string jsonString = File.ReadAllText(filePath);
                 var fields = JsonImporter.DeserialiseJson(jsonString);
                 string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV.json", ".ENV");
-                JsonImporter.WriteJsonToENV(outputFile,fields, dataDictionaryEntries);
+                JsonImporter.WriteJsonToENV(outputFile, fields, dataDictionaryEntries);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
             }
-                return;
+            return;
         }
 
         // else parse ENV File

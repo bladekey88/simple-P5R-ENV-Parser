@@ -43,25 +43,25 @@
             switch (fieldType)
             {
                 case "enum Boolean":
-                    return BitConverter.GetBytes((bool) fieldValue);
-                case "u8":                    
-                    return (byte) fieldValue;
+                    return BitConverter.GetBytes((bool)fieldValue);
+                case "u8":
+                    return (byte)fieldValue;
                 case "f32":
-                    var floatBytes = BitConverter.GetBytes((float) fieldValue);
+                    var floatBytes = BitConverter.GetBytes((float)fieldValue);
                     // Windows uses LE assembly
                     if (BitConverter.IsLittleEndian)
                     {
                         Array.Reverse(floatBytes); // Reverse bytes if little endian
                     }
-                    return floatBytes;                    
+                    return floatBytes;
                 case "u32":
                     // Windows uses LE assembly
-                    var intBytes = BitConverter.GetBytes((int) fieldValue);
+                    var intBytes = BitConverter.GetBytes((int)fieldValue);
                     if (BitConverter.IsLittleEndian)
                     {
                         Array.Reverse(intBytes); // Reverse bytes if little endian
                     }
-                    return intBytes;              
+                    return intBytes;
                 default:
                     throw new ArgumentException($"Unsupported Field Type: {fieldType}");
             }

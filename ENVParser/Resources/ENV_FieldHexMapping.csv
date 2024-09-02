@@ -43,15 +43,15 @@ Character Model Ambient Alpha,138h,4,f32
 Character Model Diffuse Red,13Ch,4,f32
 Character Model Diffuse Green,140h,4,f32
 Character Model Diffuse Blue,144h,4,f32
-Character Model Ambient Alpha,148h,4,f32
+Character Model Diffuse Alpha,148h,4,f32
 Character Model Specular Red,14Ch,4,f32
 Character Model Specular Green,150h,4,f32
 Character Model Specular Blue,154h,4,f32
-Character Model Specular Alpha?,158h,4,f32
+Character Model Specular Alpha,158h,4,f32
 Character Model Emissive Red,15Ch,4,f32
 Character Model Emissive Green,160h,4,f32
 Character Model Emissive Blue,164h,4,f32
-Character Model Emissive Alpha?,168h,4,f32
+Character Model Emissive Alpha,168h,4,f32
 Field16C,16Ch,4,f32
 Field170,170h,4,f32
 Field174,174h,4,f32
