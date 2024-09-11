@@ -10,7 +10,10 @@
 
   <ItemGroup>
     <Compile Remove="ByteArrayProcessor_old.cs" />
-    <Compile Remove="DataDictionary_old.cs" />
+    <Compile Remove="CsvExporter.cs" />
+    <Compile Remove="EnvFileParser.cs" />
+    <Compile Remove="FieldTypeConverter.cs" />
+    <Compile Remove="JsonImporter.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,15 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ENV_FieldHexMapping.csv">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Ryuji.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="ByteArrayProcessor_old.cs" />
-    <None Include="DataDictionary_old.cs" />
   </ItemGroup>
 
   <ItemGroup>

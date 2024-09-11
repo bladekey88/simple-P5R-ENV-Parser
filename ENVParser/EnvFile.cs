@@ -1,10 +1,11 @@
 ﻿using ENVParser.Utils;
-
+using System.Collections;
+using System.Reflection;
 namespace ENVParser
 {
 
     [Serializable]
-    internal class EnvFile
+    public class EnvFile : IEnumerable<KeyValuePair<string, object>>
     {
         public uint FileMagic { get; set; }
         public uint GFSVersion { get; set; }
@@ -189,7 +190,7 @@ namespace ENVParser
         public uint Field334 { get; set; }
         public byte Field338 { get; set; }
 
-        public void Read(BigEndianBinaryReader reader)
+        public EnvFile Read(BigEndianBinaryReader reader)
         {
             FileMagic = reader.ReadUInt32();
             GFSVersion = reader.ReadUInt32();
@@ -373,6 +374,8 @@ namespace ENVParser
             Field330 = reader.ReadUInt32();
             Field334 = reader.ReadUInt32();
             Field338 = reader.ReadByte();
+
+            return this;
         }
 
         public void Write(BigEndianBinaryWriter writer)
@@ -559,6 +562,19 @@ namespace ENVParser
             writer.Write(Field330);
             writer.Write(Field334);
             writer.Write(Field338);
+        }
+
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            foreach (var prop in typeof(EnvFile).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                yield return new KeyValuePair<string, object>(prop.Name, prop.GetValue(this));
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator(); // Calls the generic version
         }
     }
 }
