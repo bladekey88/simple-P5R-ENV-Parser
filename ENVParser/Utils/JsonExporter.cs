@@ -83,7 +83,7 @@ namespace ENVParser.Utils
                         FieldType = fieldType
                     };
                     fields.Add(output);
-                }                
+                }
             }
 
             var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
@@ -116,6 +116,6 @@ namespace ENVParser.Utils
             {
                 return null;
             }
-        }       
+        }
     }
 }

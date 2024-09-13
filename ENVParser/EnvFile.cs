@@ -7,6 +7,8 @@ namespace ENVParser
     [Serializable]
     public class EnvFile : IEnumerable<KeyValuePair<string, object>>
     {
+
+
         public uint FileMagic { get; set; }
         public uint GFSVersion { get; set; }
         public uint FileType { get; set; }
@@ -190,6 +192,33 @@ namespace ENVParser
         public uint Field334 { get; set; }
         public byte Field338 { get; set; }
 
+        private readonly Dictionary<string, PropertyInfo> _propertyMap = new Dictionary<string, PropertyInfo>();
+        private readonly Dictionary<string, object> _envVariables = new Dictionary<string, object>();
+
+        public EnvFile()
+        {
+            // Populate the property map
+            foreach (var property in typeof(EnvFile).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                _propertyMap[property.Name] = property;
+            }
+        }
+
+        public void Add(string key, object value)
+        {
+            if (_propertyMap.ContainsKey(key))
+            {
+                PropertyInfo property = _propertyMap[key];
+                if (property.CanWrite)
+                {
+                    property.SetValue(this, value);
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unknown Property: {key} with value {value}");
+            }
+        }
         public EnvFile Read(BigEndianBinaryReader reader)
         {
             FileMagic = reader.ReadUInt32();
