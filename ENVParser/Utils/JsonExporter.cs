@@ -23,8 +23,7 @@ namespace ENVParser.Utils
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
 
-            // Set up sections for json from structs
-            //var sections = new List<Section>();
+            // Use a list to store the transformed data
             List<JsonOutput> fields = [];
 
             foreach (var data in envFile)
@@ -32,7 +31,6 @@ namespace ENVParser.Utils
                 // unpack tuple and save into appropriate fields 
 
                 var (fieldName, fieldValue) = data;
-                string fieldTypeInternal = data.Value.GetType().ToString();
                 var fieldType = "f32";
 
                 // Use a switch to get friendly type names
