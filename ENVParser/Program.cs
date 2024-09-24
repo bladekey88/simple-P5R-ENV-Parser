@@ -8,7 +8,7 @@ internal class Program
         if (args.Length == 0)
         {
             Console.WriteLine("\nUsage: ENVParser <file path> <csv|json>(optional)");
-            Console.WriteLine("\n\t - Either drop an ENV or provide a file path as a command-line argument.");
+            Console.WriteLine("\n\t - Either drop an ENV or ENV.json or provide a file path as a command-line argument.");
             //Console.WriteLine("\t - If proving an ENV file, you can optionally specify an output file type as the second argument.");
             //Console.WriteLine("\t   JSON and CSV are supported for export (JSON is the default).");
             return;
@@ -22,32 +22,77 @@ internal class Program
             return;
         }
 
-        // Only accept ENV or ENV.json files
+        // Only accept ENV or ENV.json files (for now)
         if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase) && !Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
         {
             Console.WriteLine($"The file must be an .ENV or an .ENV.json file: '{Path.GetExtension(filePath)}' provided");
             return;
         }
 
-        EnvFile envFile = new();
-        
-        // Call the Read method to populate the envFile instance
-        using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
-        using BigEndianBinaryReader reader = new(fileStream);        
-        envFile.Read(reader);
-        
-        // Write to JSON
-        string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.json");
-        JsonExporter exporter = new();
-        exporter.Export(outputFile, envFile);
-        Console.WriteLine($"\n\tJSON file created at: '{outputFile}'");
-        return;
+        // Prepare object for use.
+        EnvFile envFile = [];
 
-        //using var stream = new FileStream($"{filePath}.bin", FileMode.Create, FileAccess.Write);
-        //using var writer = new BigEndianBinaryWriter(stream);
-        //envFile2.Write(writer);
+        // Process Files
+        if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
+        {
+            try
+            {
+                string jsonString = File.ReadAllText(filePath);
+                var deserialisedJson = JsonImporter.DeserialiseJson(jsonString);
 
+                // Update Env Object with data - special override needed for reserve
+                // ByteArray should max out at 188.
+                byte[] reserveSection = new byte[188];
+                int byteIndex = 0;
 
+                foreach (var item in deserialisedJson)
+                {
+                    if (item.FieldName.Contains("Reserve", StringComparison.OrdinalIgnoreCase))
+                    {
+                        reserveSection[byteIndex] = (byte)item.FieldValue;
+
+                        // Override Name and Value for the reserve fields
+                        if (byteIndex < 187)
+                        {
+                            byteIndex++;
+                            continue;
+                        }
+                        else
+                        {
+                            item.FieldName = "UnusedTextureSection";
+                            item.FieldValue = reserveSection;
+                        }
+                    }
+                    envFile.Add(item.FieldName, item.FieldValue);
+                }
+
+                // Write out to file
+                string outputENV = Path.GetFullPath(filePath).ToString().Replace(".ENV.json", ".ENV");
+                using var stream = new FileStream(outputENV, FileMode.Create, FileAccess.Write);
+                using BigEndianBinaryWriter writer = new(stream);
+                envFile.Write(writer);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return;
+        }
+        else if (Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase))
+        {
+            // Call the Read method to populate the envFile instance
+            using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
+            using BigEndianBinaryReader reader = new(fileStream);
+            envFile.Read(reader);
+
+            // Write to JSON
+            string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.json");
+            JsonExporter exporter = new();
+            exporter.Export(outputFile, envFile);
+            Console.WriteLine($"\n\tJSON file created at: '{outputFile}'");
+            return;
+        }
 
     }
 }
