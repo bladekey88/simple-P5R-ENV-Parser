@@ -9,8 +9,8 @@ internal class Program
         {
             Console.WriteLine("\nUsage: ENVParser <file path> <csv|json>(optional)");
             Console.WriteLine("\n\t - Either drop an ENV or ENV.json or provide a file path as a command-line argument.");
-            //Console.WriteLine("\t - If proving an ENV file, you can optionally specify an output file type as the second argument.");
-            //Console.WriteLine("\t   JSON and CSV are supported for export (JSON is the default).");
+            Console.WriteLine("\t - If proving an ENV file, you can optionally specify an output file type as the second argument.");
+            Console.WriteLine("\t   JSON and CSV are supported for export (JSON is the default).");
             return;
         }
 
@@ -81,17 +81,35 @@ internal class Program
         }
         else if (Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase))
         {
-            // Call the Read method to populate the envFile instance
-            using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
-            using BigEndianBinaryReader reader = new(fileStream);
-            envFile.Read(reader);
+            try
+            {
+                // Call the Read method to populate the envFile instance
+                using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
+                using BigEndianBinaryReader reader = new(fileStream);
+                envFile.Read(reader);
 
-            // Write to JSON
-            string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.json");
-            JsonExporter exporter = new();
-            exporter.Export(outputFile, envFile);
-            Console.WriteLine($"\n\tJSON file created at: '{outputFile}'");
+                if (args.Length == 2 && args[1].Contains("csv", StringComparison.CurrentCultureIgnoreCase))
+                { //Write to CSV
+                    string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.csv");
+                    CsvExporter exporter = new();
+                    exporter.Export(outputFile, envFile);
+                    Console.WriteLine($"\n\tCSV file created at: '{outputFile}'");
+                }
+                else
+                {
+                    // Write to JSON
+                    string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.json");
+                    JsonExporter exporter = new();
+                    exporter.Export(outputFile, envFile);
+                    Console.WriteLine($"\n\tJSON file created at: '{outputFile}'");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
             return;
+
         }
 
     }

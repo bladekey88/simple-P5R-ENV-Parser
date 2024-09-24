@@ -59,27 +59,5 @@ namespace ENVParser.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FieldName,HexAddress,FieldLength,FieldTypeConverter
-        ///ENV Header,0h,16,struct Header
-        ///ENV Params,10h,792,struct EnvParams
-        ///Enable Field Model Section,11h,1,enum Boolean
-        ///Field Model Section,12h,280,struct FieldModelParams
-        ///Field Model Diffuse Red,12h,4,f32
-        ///Field Model Diffuse Green,16h,4,f32
-        ///Field Model Diffuse Blue,1Ah,4,f32
-        ///Field Model Diffuse Alpha,1Eh,4,f32
-        ///Field Model Ambient Red,22h,4,f32
-        ///Field Model Ambient Green,26h,4,f32
-        ///Field Model Ambient Blue,2Ah,4,f32
-        ///Field Model Ambient Alpha,2Eh,4,f32
-        ///Field Mod [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string ENV_FieldHexMapping {
-            get {
-                return ResourceManager.GetString("ENV_FieldHexMapping", resourceCulture);
-            }
-        }
     }
 }
