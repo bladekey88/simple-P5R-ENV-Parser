@@ -88,6 +88,20 @@ internal class Program
                 using BigEndianBinaryReader reader = new(fileStream);
                 envFile.Read(reader);
 
+                // For now exit if an unsupported GFS Version is detected
+                if (envFile.GFSVersion != 17846608)
+                {
+                    string hexValue = "0x" + envFile.GFSVersion.ToString("X7");                    
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Error:\tUnsupported ENV Detected");
+                    Console.WriteLine("Reason:\tExpected GFS Version is 0x1105150 (17846608)");
+                    Console.WriteLine($"Reason:\tSupplied GFS Version is {hexValue} ({envFile.GFSVersion})");
+                    Console.ResetColor();
+                    Console.WriteLine("Press enter to close this window");
+                    Console.ReadKey();
+                    throw new Exception("Unsupported ENV Version");
+                }
+
                 if (args.Length == 2 && args[1].Contains("csv", StringComparison.CurrentCultureIgnoreCase))
                 { //Write to CSV
                     string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.csv");

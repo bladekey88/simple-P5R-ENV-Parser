@@ -6,6 +6,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Resources\Ryuji.ico</ApplicationIcon>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <SignAssembly>False</SignAssembly>
+    <Version>0.3.1-alpha</Version>
+    <Description>This is a small program that will output the values from an ENV to a json or csv file with labels (where known). This work is based on the 010 templates created by the P5R community, and references this page https://amicitia.miraheze.org/wiki/Persona_5_Royal/ENV/Structure.</Description>
+    <PackageProjectUrl>https://github.com/bladekey88/simple-P5R-ENV-Parser/</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/bladekey88/simple-P5R-ENV-Parser/</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <GenerateAssemblyInfo>True</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>
