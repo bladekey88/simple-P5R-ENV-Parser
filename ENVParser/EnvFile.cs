@@ -219,6 +219,15 @@ namespace ENVParser
                 throw new InvalidOperationException($"Unknown Property: {key} with value {value}");
             }
         }
+
+        public EnvFile ReadHeader(BigEndianBinaryReader reader)
+        {
+            FileMagic = reader.ReadUInt32();
+            GFSVersion = reader.ReadUInt32();
+            FileType = reader.ReadUInt32();
+            Field0C = reader.ReadUInt32();
+            return this;
+        }
         public EnvFile Read(BigEndianBinaryReader reader)
         {
             FileMagic = reader.ReadUInt32();

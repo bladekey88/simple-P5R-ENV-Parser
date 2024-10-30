@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace ENVParser.Utils
 {
-    internal class CsvExporter
+    internal class CsvExporter:IExporter
     {
         private readonly HashSet<string> _validFieldsForRGBValues;
 

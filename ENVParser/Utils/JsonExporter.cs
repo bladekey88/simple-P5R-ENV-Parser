@@ -4,7 +4,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ENVParser.Utils
 {
-    internal class JsonExporter
+    internal class JsonExporter:IExporter
     {
 
         private readonly HashSet<string> _validFieldsForRGBValues;
