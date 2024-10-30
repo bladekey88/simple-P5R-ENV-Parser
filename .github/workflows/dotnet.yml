@@ -5,9 +5,9 @@ name: .NET
 
 on:
   push:
-    branches: [ "ENVFile-as-Object" ]
+    branches: [ "*" ]
   pull_request:
-    branches: [ "ENVFile-as-Object" ]
+    branches: [ "*" ]
 
 jobs:
   build:
