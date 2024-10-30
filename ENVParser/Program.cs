@@ -1,5 +1,6 @@
 ﻿
 using ENVParser;
+using ENVParser.Fields;
 using ENVParser.Utils;
 internal class Program
 {
@@ -18,19 +19,20 @@ internal class Program
         string filePath = args[0];
         if (!File.Exists(filePath))
         {
-            Console.WriteLine($"The specified file does not exist: '{filePath}'");
+            Console.WriteLine($"ERROR\tThe specified file does not exist: '{filePath}'");
             return;
         }
 
         // Only accept ENV or ENV.json files (for now)
         if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase) && !Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
         {
-            Console.WriteLine($"The file must be an .ENV or an .ENV.json file: '{Path.GetExtension(filePath)}' provided");
+            Console.WriteLine($"ERROR\tThe file must be an .ENV or an .ENV.json file: '{Path.GetExtension(filePath)}' provided");
             return;
         }
 
         // Prepare object for use.
         EnvFile envFile = [];
+        EnvFile envFileHeader = [];
 
         // Process Files
         if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
@@ -86,41 +88,49 @@ internal class Program
                 // Call the Read method to populate the envFile instance
                 using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
                 using BigEndianBinaryReader reader = new(fileStream);
+                envFileHeader.ReadHeader(reader);
+
+                // Validation on GFS header
+                // Use the enum from the class - though when refactoring lets pull this into its own class
+                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFileHeader.GFSVersion);
+                
+                if (!gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+                {   
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write($"ERROR\tCurrently only P5 Royal ENVs are supported ({gameVersion} supplied)");
+                    Console.ResetColor();
+                    Console.WriteLine("\n\nPress any key to close this window");
+                    Console.ReadKey(true);
+                    throw new NotImplementedException($"The program exited due to an unsupported game version");
+                }
+
+                // As we are using the same reader as the header, reset it to position 0
+                reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 envFile.Read(reader);
 
-                // For now exit if an unsupported GFS Version is detected
-                if (envFile.GFSVersion != 17846608)
-                {
-                    string hexValue = "0x" + envFile.GFSVersion.ToString("X7");                    
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Error:\tUnsupported ENV Detected");
-                    Console.WriteLine("Reason:\tExpected GFS Version is 0x1105150 (17846608)");
-                    Console.WriteLine($"Reason:\tSupplied GFS Version is {hexValue} ({envFile.GFSVersion})");
-                    Console.ResetColor();
-                    Console.WriteLine("Press enter to close this window");
-                    Console.ReadKey();
-                    throw new Exception("Unsupported ENV Version");
-                }
+                // Determine the output and write it
+                string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
+                    ? "csv" 
+                    : "json";
+                string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", $".ENV.{outputFileExtension}");
 
-                if (args.Length == 2 && args[1].Contains("csv", StringComparison.CurrentCultureIgnoreCase))
-                { //Write to CSV
-                    string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.csv");
-                    CsvExporter exporter = new();
-                    exporter.Export(outputFile, envFile);
-                    Console.WriteLine($"\n\tCSV file created at: '{outputFile}'");
-                }
-                else
-                {
-                    // Write to JSON
-                    string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", ".ENV.json");
-                    JsonExporter exporter = new();
-                    exporter.Export(outputFile, envFile);
-                    Console.WriteLine($"\n\tJSON file created at: '{outputFile}'");
-                }
+                IExporter exporter = outputFileExtension == "csv" ? new CsvExporter() : new JsonExporter();                
+                exporter.Export(outputFile, envFile);
+                
+                // Update the user
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"OK\tConversion to {outputFileExtension} complete");
+                Console.ResetColor();
+                Console.WriteLine($"INFO\tJSON file created at: '{outputFile}'");
+                Console.WriteLine("\nPress Enter to close this window");
+                Console.ReadKey(true);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"EXCEPTION\t{ex.GetType().Name}");
+                Console.WriteLine($"EXCEPTION\t{ex.Message}");
+                Console.ResetColor();
             }
             return;
 

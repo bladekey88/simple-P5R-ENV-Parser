@@ -6,7 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Resources\Ryuji.ico</ApplicationIcon>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <SignAssembly>False</SignAssembly>
     <Version>0.3.1-alpha</Version>
     <Description>This is a small program that will output the values from an ENV to a json or csv file with labels (where known). This work is based on the 010 templates created by the P5R community, and references this page https://amicitia.miraheze.org/wiki/Persona_5_Royal/ENV/Structure.</Description>
