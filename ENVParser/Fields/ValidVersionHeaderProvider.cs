@@ -1,9 +1,26 @@
-﻿namespace ENVParser.Fields
+﻿using System;
+
+namespace ENVParser.Fields
 {
     internal class ValidVersionHeaderProvider
     {
+        public static GameVersions CheckValidVersion(uint versionNumber) {
+            ArgumentOutOfRangeException.ThrowIfNegative(versionNumber);
 
-        public static GameVersions CheckValidVersion(uint versionNumber)
+            if (_p5RoyalGfsVersions.Contains(versionNumber))
+            {                
+                return GameVersions.P5Royal;
+            }
+
+            if (_p5VanillaGfsVersions.Contains(versionNumber) || _p5BetaGfsVersions.Contains(versionNumber))
+            {
+               return GameVersions.P5Vanilla;
+            }
+
+            throw new ArgumentException("The program exited due to an unsupported or invalid GFS Version");
+
+        }
+        public static GameVersions CheckValidVersion(uint versionNumber, bool showOutput)
         {
             ArgumentOutOfRangeException.ThrowIfNegative(versionNumber);
 
@@ -28,7 +45,7 @@
                     Console.WriteLine("OK\tGFS Version matches Persona 5 Beta");
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("WARN\tPersona 5 (Vanilla) mapping will be used.");
-                    Console.WriteLine("WARN\tIf you wish to use the Beta mapping, pass the (INSERT FLAG TBD) flag");
+                    Console.WriteLine("WARN\tThe Beta may not behave as expected");
                 }
 ;
                 Console.ResetColor();
