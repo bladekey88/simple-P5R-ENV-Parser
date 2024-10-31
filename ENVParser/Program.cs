@@ -92,17 +92,7 @@ internal class Program
 
                 // Validation on GFS header
                 // Use the enum from the class - though when refactoring lets pull this into its own class
-                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFileHeader.GFSVersion);
-                
-                if (!gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-                {   
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.Write($"ERROR\tCurrently only P5 Royal ENVs are supported ({gameVersion} supplied)");
-                    Console.ResetColor();
-                    Console.WriteLine("\n\nPress any key to close this window");
-                    Console.ReadKey(true);
-                    throw new NotImplementedException($"The program exited due to an unsupported game version");
-                }
+                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFileHeader.GFSVersion,true);                              
 
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -121,7 +111,7 @@ internal class Program
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"OK\tConversion to {outputFileExtension} complete");
                 Console.ResetColor();
-                Console.WriteLine($"INFO\tJSON file created at: '{outputFile}'");
+                Console.WriteLine($"INFO\t{outputFileExtension.ToUpper()} file created at: '{outputFile}'");
                 Console.WriteLine("\nPress Enter to close this window");
                 Console.ReadKey(true);
             }
