@@ -1,6 +1,8 @@
-﻿using ENVParser.Utils;
+﻿using ENVParser.Fields;
+using ENVParser.Utils;
 using System.Collections;
 using System.Reflection;
+using static ENVParser.Fields.ValidVersionHeaderProvider;
 namespace ENVParser
 {
 
@@ -87,7 +89,10 @@ namespace ENVParser
         public bool EnableGraphicOutput { get; set; }
         public bool EnableBloom { get; set; }
         public bool EnableGlare { get; set; }
-        public uint Field1CC { get; set; }
+        public bool Field1CC { get; set; }
+        public bool Field1CD { get; set; }
+        public bool Field1CE { get; set; }
+        public bool Field1CF { get; set; }
         public uint Field1D0 { get; set; }
         public float BloomAmount { get; set; }
         public float BloomDetail { get; set; }
@@ -192,8 +197,8 @@ namespace ENVParser
         public uint Field334 { get; set; }
         public byte Field338 { get; set; }
 
-        private readonly Dictionary<string, PropertyInfo> _propertyMap = new Dictionary<string, PropertyInfo>();
-        private readonly Dictionary<string, object> _envVariables = new Dictionary<string, object>();
+        private readonly Dictionary<string, PropertyInfo> _propertyMap = [];
+        private readonly Dictionary<string, object> _envVariables = [];
 
         public EnvFile()
         {
@@ -235,6 +240,11 @@ namespace ENVParser
             FileType = reader.ReadUInt32();
             Field0C = reader.ReadUInt32();
             Field10 = reader.ReadByte();
+
+            // Derive GameVersion on read
+            ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(this.GFSVersion);
+
+            // Field Model Section
             EnableFieldModelSection = reader.ReadBoolean();
             FieldModelAmbientRed = reader.ReadSingle();
             FieldModelAmbientGreen = reader.ReadSingle();
@@ -261,6 +271,8 @@ namespace ENVParser
             FieldModelLightZ = reader.ReadSingle();
             UnusedTextureSection = reader.ReadBytes(188);
             Field12A = reader.ReadByte();
+
+            // Character Model Section
             EnableCharacterModelSection = reader.ReadBoolean();
             CharacterModelAmbientRed = reader.ReadSingle();
             CharacterModelAmbientGreen = reader.ReadSingle();
@@ -288,6 +300,8 @@ namespace ENVParser
             Field188 = reader.ReadSingle();
             ModelNearClip = reader.ReadSingle();
             ModelFarClip = reader.ReadSingle();
+            
+            // Fog Section
             EnableFog = reader.ReadBoolean();
             EnableAmbientFog = reader.ReadBoolean();
             DisableFog = reader.ReadBoolean();
@@ -305,45 +319,66 @@ namespace ENVParser
             FloorFogGreen = reader.ReadSingle();
             FloorFogBlue = reader.ReadSingle();
             FloorFogOpacity = reader.ReadSingle();
+            
+            // Lighting Section
             EnableGraphicOutput = reader.ReadBoolean();
             EnableBloom = reader.ReadBoolean();
             EnableGlare = reader.ReadBoolean();
-            Field1CC = reader.ReadUInt32();
-            Field1D0 = reader.ReadUInt32();
+            Field1CC = reader.ReadBoolean();
+            
+            // P5R Only Fields 
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))             
+            {               
+                Field1CD = reader.ReadBoolean();
+                Field1CE = reader.ReadBoolean();
+                Field1CF = reader.ReadBoolean();
+                Field1D0 = reader.ReadUInt32();
+            }
+                           
             BloomAmount = reader.ReadSingle();
             BloomDetail = reader.ReadSingle();
             BloomWhiteLevel = reader.ReadSingle();
             BloomDarkLevel = reader.ReadSingle();
             GlareSensitivity = reader.ReadSingle();
-            SceneWhiteLevels = reader.ReadSingle();
-            SceneDarkLevels = reader.ReadSingle();
-            Field1F0 = reader.ReadSingle();
-            Field1F4 = reader.ReadSingle();
-            Field1F8 = reader.ReadSingle();
-            Field1FC = reader.ReadUInt32();
-            Field200 = reader.ReadSingle();
-            Field204 = reader.ReadSingle();
-            Field208 = reader.ReadUInt32();
-            Field20C = reader.ReadUInt32();
-            Field210 = reader.ReadSingle();
-            Field214 = reader.ReadSingle();
-            RedColourBoost = reader.ReadSingle();
-            GreenColourBoost = reader.ReadSingle();
-            BlueColourBoost = reader.ReadSingle();
-            Field224 = reader.ReadSingle();
-            Field228 = reader.ReadSingle();
-            Field22C = reader.ReadSingle();
-            Field230 = reader.ReadSingle();
-            Field234 = reader.ReadSingle();
-            Field238 = reader.ReadSingle();
-            Field23C = reader.ReadSingle();
+
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                SceneWhiteLevels = reader.ReadSingle();
+                SceneDarkLevels = reader.ReadSingle();
+                Field1F0 = reader.ReadSingle();
+                Field1F4 = reader.ReadSingle();
+                Field1F8 = reader.ReadSingle();
+                Field1FC = reader.ReadUInt32();
+                Field200 = reader.ReadSingle();
+                Field204 = reader.ReadSingle();
+                Field208 = reader.ReadUInt32();
+                Field20C = reader.ReadUInt32();
+                Field210 = reader.ReadSingle();
+                Field214 = reader.ReadSingle();
+                RedColourBoost = reader.ReadSingle();
+                GreenColourBoost = reader.ReadSingle();
+                BlueColourBoost = reader.ReadSingle();
+                Field224 = reader.ReadSingle();
+                Field228 = reader.ReadSingle();
+                Field22C = reader.ReadSingle();
+                Field230 = reader.ReadSingle();
+                Field234 = reader.ReadSingle();
+                Field238 = reader.ReadSingle();
+                Field23C = reader.ReadSingle();
+            }
+            
             GlareLength = reader.ReadSingle();
             GlareChromaticAberration = reader.ReadSingle();
             GlareDirection = reader.ReadSingle();
             GlareMode = reader.ReadUInt32();
+            
+            // Unknown Section
             Field250 = reader.ReadBoolean();
             Field251 = reader.ReadUInt32();
-            Field255 = reader.ReadSingle();
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                Field255 = reader.ReadSingle();
+            }
             Field259 = reader.ReadSingle();
             Field25D = reader.ReadSingle();
             EnableDOF = reader.ReadBoolean();
@@ -360,6 +395,8 @@ namespace ENVParser
             SSAO_Brightness = reader.ReadSingle();
             SSAO_DepthRange = reader.ReadSingle();
             DisableUnknownFlaggedSection = reader.ReadBoolean();
+            
+            // Field Shadow Section
             FieldShadowFarClip = reader.ReadSingle();
             Field294 = reader.ReadSingle();
             AmbientShadowBrightness = reader.ReadSingle();
@@ -371,10 +408,17 @@ namespace ENVParser
             Field2AD = reader.ReadBoolean();
             Field2AE = reader.ReadBoolean();
             Field2AF = reader.ReadBoolean();
-            ShadowColourRed = reader.ReadSingle();
-            ShadowColourGreen = reader.ReadSingle();
-            ShadowColourBlue = reader.ReadSingle();
-            ShadowColourAlpha = reader.ReadSingle();
+
+            // Shadow Colour Section (Royal Only)
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                ShadowColourRed = reader.ReadSingle();
+                ShadowColourGreen = reader.ReadSingle();
+                ShadowColourBlue = reader.ReadSingle();
+                ShadowColourAlpha = reader.ReadSingle();
+            }
+
+            // Colour Correction Section
             DisplayColourGrading = reader.ReadBoolean();
             Cyan = reader.ReadSingle();
             Magenta = reader.ReadSingle();
@@ -392,6 +436,8 @@ namespace ENVParser
             Field2F2 = reader.ReadSingle();
             Field2F6 = reader.ReadSingle();
             ReflectionHeight = reader.ReadSingle();
+            
+            // Physics Section
             EnablePhysicsSection = reader.ReadBoolean();
             Gravity = reader.ReadSingle();
             EnableWind = reader.ReadBoolean();
@@ -402,22 +448,30 @@ namespace ENVParser
             WindStrengthModifier = reader.ReadSingle();
             WindCycleTime = reader.ReadSingle();
             WindCycleDelay = reader.ReadSingle();
+            
+            // Clear Colour Section
             ClearColourRed = reader.ReadByte();
             ClearColourGreen = reader.ReadByte();
             ClearColourBlue = reader.ReadByte();
             ClearColourAlpha = reader.ReadByte();
+            
+            
             Field324 = reader.ReadUInt32();
-            Field328 = reader.ReadUInt32();
-            Field32C = reader.ReadUInt32();
-            Field330 = reader.ReadUInt32();
-            Field334 = reader.ReadUInt32();
-            Field338 = reader.ReadByte();
-
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                Field328 = reader.ReadUInt32();
+                Field32C = reader.ReadUInt32();
+                Field330 = reader.ReadUInt32();
+                Field334 = reader.ReadUInt32();
+                Field338 = reader.ReadByte();
+            }
             return this;
         }
 
         public void Write(BigEndianBinaryWriter writer)
         {
+            ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(GFSVersion);
+
             writer.Write(FileMagic);
             writer.Write(GFSVersion);
             writer.Write(FileType);
@@ -497,41 +551,57 @@ namespace ENVParser
             writer.Write(EnableBloom);
             writer.Write(EnableGlare);
             writer.Write(Field1CC);
-            writer.Write(Field1D0);
+            
+            // P5R Only Fields
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                writer.Write(Field1CD);
+                writer.Write(Field1CE);
+                writer.Write(Field1CF);
+                writer.Write(Field1D0);
+            }
+
             writer.Write(BloomAmount);
             writer.Write(BloomDetail);
             writer.Write(BloomWhiteLevel);
             writer.Write(BloomDarkLevel);
             writer.Write(GlareSensitivity);
-            writer.Write(SceneWhiteLevels);
-            writer.Write(SceneDarkLevels);
-            writer.Write(Field1F0);
-            writer.Write(Field1F4);
-            writer.Write(Field1F8);
-            writer.Write(Field1FC);
-            writer.Write(Field200);
-            writer.Write(Field204);
-            writer.Write(Field208);
-            writer.Write(Field20C);
-            writer.Write(Field210);
-            writer.Write(Field214);
-            writer.Write(RedColourBoost);
-            writer.Write(GreenColourBoost);
-            writer.Write(BlueColourBoost);
-            writer.Write(Field224);
-            writer.Write(Field228);
-            writer.Write(Field22C);
-            writer.Write(Field230);
-            writer.Write(Field234);
-            writer.Write(Field238);
-            writer.Write(Field23C);
+
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                writer.Write(SceneWhiteLevels);
+                writer.Write(SceneDarkLevels);
+                writer.Write(Field1F0);
+                writer.Write(Field1F4);
+                writer.Write(Field1F8);
+                writer.Write(Field1FC);
+                writer.Write(Field200);
+                writer.Write(Field204);
+                writer.Write(Field208);
+                writer.Write(Field20C);
+                writer.Write(Field210);
+                writer.Write(Field214);
+                writer.Write(RedColourBoost);
+                writer.Write(GreenColourBoost);
+                writer.Write(BlueColourBoost);
+                writer.Write(Field224);
+                writer.Write(Field228);
+                writer.Write(Field22C);
+                writer.Write(Field230);
+                writer.Write(Field234);
+                writer.Write(Field238);
+                writer.Write(Field23C);
+            }
             writer.Write(GlareLength);
             writer.Write(GlareChromaticAberration);
             writer.Write(GlareDirection);
             writer.Write(GlareMode);
             writer.Write(Field250);
             writer.Write(Field251);
-            writer.Write(Field255);
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                writer.Write(Field255);
+            }
             writer.Write(Field259);
             writer.Write(Field25D);
             writer.Write(EnableDOF);
@@ -559,10 +629,13 @@ namespace ENVParser
             writer.Write(Field2AD);
             writer.Write(Field2AE);
             writer.Write(Field2AF);
-            writer.Write(ShadowColourRed);
-            writer.Write(ShadowColourGreen);
-            writer.Write(ShadowColourBlue);
-            writer.Write(ShadowColourAlpha);
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                writer.Write(ShadowColourRed);
+                writer.Write(ShadowColourGreen);
+                writer.Write(ShadowColourBlue);
+                writer.Write(ShadowColourAlpha);
+            }
             writer.Write(DisplayColourGrading);
             writer.Write(Cyan);
             writer.Write(Magenta);
@@ -595,11 +668,14 @@ namespace ENVParser
             writer.Write(ClearColourBlue);
             writer.Write(ClearColourAlpha);
             writer.Write(Field324);
-            writer.Write(Field328);
-            writer.Write(Field32C);
-            writer.Write(Field330);
-            writer.Write(Field334);
-            writer.Write(Field338);
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                writer.Write(Field328);
+                writer.Write(Field32C);
+                writer.Write(Field330);
+                writer.Write(Field334);
+                writer.Write(Field338);
+            }
         }
 
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
