@@ -7,6 +7,7 @@ namespace ENVParser.Utils
     internal class CsvExporter:IExporter
     {
         private readonly HashSet<string> _validFieldsForRGBValues;
+        private readonly HashSet<string> _P5RUniqueFields;
 
         // Defines the structure of CSV records
         private class CsvOutput
@@ -20,6 +21,7 @@ namespace ENVParser.Utils
         public CsvExporter()
         {
             _validFieldsForRGBValues = RGBFieldNameProvider.GetValidFields();
+            _P5RUniqueFields = P5ROnlyFieldsProvider.GetP5RUniqueFields();
         }
 
         public void Export(string filePath, EnvFile envFile)
@@ -29,23 +31,29 @@ namespace ENVParser.Utils
                 throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
+            
+            // Derive GameVersion
+            ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
 
             // As this is a one-way transfer
             // No need for special override for Texture Section so, can override value to 0
-            var csvData = envFile.Select(data => new CsvOutput
+            // However also need to do a game version check to remove unneeded fields
+            var csvData = envFile.Where(data =>
+            {
+                // This statement does not selects the fields not in the HashSet if we don't use P5R
+                // thus not passing them to the CSV generator below
+                return !(_P5RUniqueFields.Contains(data.Key) && !gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal));
+            }).Select(data => new CsvOutput
             {
                 FieldName = data.Key,
-                Value = !data.Key.Equals("UnusedTextureSection") ? data.Value.ToString() : "0",
+                Value = !data.Key.Equals("UnusedTextureSection", StringComparison.Ordinal) ? data.Value.ToString() : "0",
                 RGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value) : null,
                 FieldType = TextReadableFieldType(data.Value.GetType().Name),
             }
             ).ToList();
 
-
-
             using var writer = new StreamWriter(filePath);
             using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            Console.WriteLine("Writing csv...");
             csv.WriteRecords(csvData);
         }
 
