@@ -8,11 +8,12 @@ namespace ENVParser.Utils
     {
 
         private readonly HashSet<string> _validFieldsForRGBValues;
-        private readonly JsonOutput output;
+        private readonly HashSet<string> _P5RUniqueFields;
 
         public JsonExporter()
         {
             _validFieldsForRGBValues = RGBFieldNameProvider.GetValidFields();
+            _P5RUniqueFields = P5ROnlyFieldsProvider.GetP5RUniqueFields();
         }
 
         public void Export(string filePath, EnvFile envFile)
@@ -23,6 +24,9 @@ namespace ENVParser.Utils
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
 
+            // Derive GameVersion
+            ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
+            
             // Use a list to store the transformed data
             List<JsonOutput> fields = [];
 
@@ -31,7 +35,14 @@ namespace ENVParser.Utils
                 // unpack tuple and save into appropriate fields 
 
                 var (fieldName, fieldValue) = data;
-                var fieldType = "f32";
+                var fieldType = "f32";  // Sets up variable
+
+                // Check game version against field name and continue to next loop if mismatch
+                if (!gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal)) {
+                    if (_P5RUniqueFields.Contains(fieldName)) { 
+                        continue;
+                    }
+                }
 
                 // Use a switch to get friendly type names
                 // Enables consistency with ENV Template
