@@ -9,8 +9,6 @@ namespace ENVParser
     [Serializable]
     public class EnvFile : IEnumerable<KeyValuePair<string, object>>
     {
-
-
         public uint FileMagic { get; set; }
         public uint GFSVersion { get; set; }
         public uint FileType { get; set; }
@@ -225,14 +223,6 @@ namespace ENVParser
             }
         }
 
-        public EnvFile ReadHeader(BigEndianBinaryReader reader)
-        {
-            FileMagic = reader.ReadUInt32();
-            GFSVersion = reader.ReadUInt32();
-            FileType = reader.ReadUInt32();
-            Field0C = reader.ReadUInt32();
-            return this;
-        }
         public EnvFile Read(BigEndianBinaryReader reader)
         {
             FileMagic = reader.ReadUInt32();
