@@ -1,20 +1,19 @@
-﻿using System;
-
-namespace ENVParser.Fields
+﻿namespace ENVParser.Fields
 {
     internal class ValidVersionHeaderProvider
     {
-        public static GameVersions CheckValidVersion(uint versionNumber) {
+        public static GameVersions CheckValidVersion(uint versionNumber)
+        {
             ArgumentOutOfRangeException.ThrowIfNegative(versionNumber);
 
             if (_p5RoyalGfsVersions.Contains(versionNumber))
-            {                
+            {
                 return GameVersions.P5Royal;
             }
 
             if (_p5VanillaGfsVersions.Contains(versionNumber) || _p5BetaGfsVersions.Contains(versionNumber))
             {
-               return GameVersions.P5Vanilla;
+                return GameVersions.P5Vanilla;
             }
 
             throw new ArgumentException("The program exited due to an unsupported or invalid GFS Version");
@@ -34,24 +33,29 @@ namespace ENVParser.Fields
                 Console.ResetColor();
                 return GameVersions.P5Royal;
             }
-            
+
             if (_p5VanillaGfsVersions.Contains(versionNumber))
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("OK\tGFS Version matches Persona 5 (Vanilla)");
+
+                if (_p4DancingGfsVersions.Contains(versionNumber))
+                {
+                    Console.WriteLine("OK\tGFS Version matches Persona 4 Dancing");
+                }
 
                 if (_p5BetaGfsVersions.Contains(versionNumber))
                 {
                     Console.WriteLine("OK\tGFS Version matches Persona 5 Beta");
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine("WARN\tPersona 5 (Vanilla) mapping will be used.");
-                    Console.WriteLine("WARN\tThe Beta may not behave as expected");
+                    Console.WriteLine("WARN\tENVs from the Beta may not behave as expected");
                 }
 ;
                 Console.ResetColor();
                 return GameVersions.P5Vanilla;
-            }            
-            
+            }
+
             // Error out for unsupported/invalid versions
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("ERROR\tUnsupported ENV Detected");
@@ -60,7 +64,7 @@ namespace ENVParser.Fields
             Console.WriteLine("\nPress any key to close this window");
             Console.ReadKey(true);
             throw new ArgumentException("The program exited due to an unsupported or invalid GFS Version");
-            
+
         }
 
         public enum GameVersions : sbyte
