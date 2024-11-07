@@ -68,6 +68,7 @@ namespace ENVParser.Fields
             Unknown = -1,
             P5Vanilla = 0,
             P5Royal = 1,
+            P4Dancing = 2,
             P5Beta = 99
         }
 
@@ -128,6 +129,12 @@ namespace ENVParser.Fields
             17843712,
             17844560,
             17844496,
-        ];        
+        ];
+
+        private static readonly HashSet<uint> _p4DancingGfsVersions =
+        [
+            // P4D only has one GFS Version, so that makes things easy
+            17846336
+        ];
     }
 }
