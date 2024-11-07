@@ -4,10 +4,9 @@ using System.Globalization;
 
 namespace ENVParser.Utils
 {
-    internal class CsvExporter:IExporter
+    internal class CsvExporter : IExporter
     {
         private readonly HashSet<string> _validFieldsForRGBValues;
-        private readonly HashSet<string> _P5RUniqueFields;
 
         // Defines the structure of CSV records
         private class CsvOutput
@@ -21,7 +20,6 @@ namespace ENVParser.Utils
         public CsvExporter()
         {
             _validFieldsForRGBValues = RGBFieldNameProvider.GetValidFields();
-            _P5RUniqueFields = P5ROnlyFieldsProvider.GetP5RUniqueFields();
         }
 
         public void Export(string filePath, EnvFile envFile)
@@ -31,18 +29,22 @@ namespace ENVParser.Utils
                 throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
-            
+
             // Derive GameVersion
             ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
+
+            // Get valid fields for GFS Version
+            List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);
+
 
             // As this is a one-way transfer
             // No need for special override for Texture Section so, can override value to 0
             // However also need to do a game version check to remove unneeded fields
             var csvData = envFile.Where(data =>
             {
-                // This statement does not selects the fields not in the HashSet if we don't use P5R
+                // This statement is used to not select the fields missing from the HashSet if we don't use P5R
                 // thus not passing them to the CSV generator below
-                return !(_P5RUniqueFields.Contains(data.Key) && !gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal));
+                return (validFields.Contains(data.Key));
             }).Select(data => new CsvOutput
             {
                 FieldName = data.Key,

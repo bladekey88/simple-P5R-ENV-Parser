@@ -2,7 +2,6 @@
 using ENVParser.Utils;
 using System.Collections;
 using System.Reflection;
-using static ENVParser.Fields.ValidVersionHeaderProvider;
 namespace ENVParser
 {
 
@@ -223,6 +222,14 @@ namespace ENVParser
             }
         }
 
+        public EnvFile ReadHeader(BigEndianBinaryReader reader)
+        {
+            FileMagic = reader.ReadUInt32();
+            GFSVersion = reader.ReadUInt32();
+            FileType = reader.ReadUInt32();
+            Field0C = reader.ReadUInt32();
+            return this;
+        }
         public EnvFile Read(BigEndianBinaryReader reader)
         {
             FileMagic = reader.ReadUInt32();
@@ -260,37 +267,41 @@ namespace ENVParser
             FieldModelLightY = reader.ReadSingle();
             FieldModelLightZ = reader.ReadSingle();
             UnusedTextureSection = reader.ReadBytes(188);
-            Field12A = reader.ReadByte();
 
             // Character Model Section
-            EnableCharacterModelSection = reader.ReadBoolean();
-            CharacterModelAmbientRed = reader.ReadSingle();
-            CharacterModelAmbientGreen = reader.ReadSingle();
-            CharacterModelAmbientBlue = reader.ReadSingle();
-            CharacterModelAmbientAlpha = reader.ReadSingle();
-            CharacterModelDiffuseRed = reader.ReadSingle();
-            CharacterModelDiffuseGreen = reader.ReadSingle();
-            CharacterModelDiffuseBlue = reader.ReadSingle();
-            CharacterModelDiffuseAlpha = reader.ReadSingle();
-            CharacterModelSpecularRed = reader.ReadSingle();
-            CharacterModelSpecularGreen = reader.ReadSingle();
-            CharacterModelSpecularBlue = reader.ReadSingle();
-            CharacterModelSpecularAlpha = reader.ReadSingle();
-            CharacterModelEmissiveRed = reader.ReadSingle();
-            CharacterModelEmissiveGreen = reader.ReadSingle();
-            CharacterModelEmissiveBlue = reader.ReadSingle();
-            CharacterModelEmissiveAlpha = reader.ReadSingle();
-            Field16C = reader.ReadSingle();
-            Field170 = reader.ReadSingle();
-            Field174 = reader.ReadSingle();
-            Field178 = reader.ReadSingle();
-            CharacterModelLightX = reader.ReadSingle();
-            CharacterModelLightY = reader.ReadSingle();
-            CharacterModelLightZ = reader.ReadSingle();
+            if (this.GFSVersion >= 17842768)
+            {
+                Field12A = reader.ReadByte();
+                EnableCharacterModelSection = reader.ReadBoolean();
+                CharacterModelAmbientRed = reader.ReadSingle();
+                CharacterModelAmbientGreen = reader.ReadSingle();
+                CharacterModelAmbientBlue = reader.ReadSingle();
+                CharacterModelAmbientAlpha = reader.ReadSingle();
+                CharacterModelDiffuseRed = reader.ReadSingle();
+                CharacterModelDiffuseGreen = reader.ReadSingle();
+                CharacterModelDiffuseBlue = reader.ReadSingle();
+                CharacterModelDiffuseAlpha = reader.ReadSingle();
+                CharacterModelSpecularRed = reader.ReadSingle();
+                CharacterModelSpecularGreen = reader.ReadSingle();
+                CharacterModelSpecularBlue = reader.ReadSingle();
+                CharacterModelSpecularAlpha = reader.ReadSingle();
+                CharacterModelEmissiveRed = reader.ReadSingle();
+                CharacterModelEmissiveGreen = reader.ReadSingle();
+                CharacterModelEmissiveBlue = reader.ReadSingle();
+                CharacterModelEmissiveAlpha = reader.ReadSingle();
+                Field16C = reader.ReadSingle();
+                Field170 = reader.ReadSingle();
+                Field174 = reader.ReadSingle();
+                Field178 = reader.ReadSingle();
+                CharacterModelLightX = reader.ReadSingle();
+                CharacterModelLightY = reader.ReadSingle();
+                CharacterModelLightZ = reader.ReadSingle();
+            }
+
             Field188 = reader.ReadSingle();
             ModelNearClip = reader.ReadSingle();
             ModelFarClip = reader.ReadSingle();
-            
+
             // Fog Section
             EnableFog = reader.ReadBoolean();
             EnableAmbientFog = reader.ReadBoolean();
@@ -309,22 +320,22 @@ namespace ENVParser
             FloorFogGreen = reader.ReadSingle();
             FloorFogBlue = reader.ReadSingle();
             FloorFogOpacity = reader.ReadSingle();
-            
+
             // Lighting Section
             EnableGraphicOutput = reader.ReadBoolean();
             EnableBloom = reader.ReadBoolean();
             EnableGlare = reader.ReadBoolean();
             Field1CC = reader.ReadBoolean();
-            
+
             // P5R Only Fields 
-            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))             
-            {               
+            if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
                 Field1CD = reader.ReadBoolean();
                 Field1CE = reader.ReadBoolean();
                 Field1CF = reader.ReadBoolean();
                 Field1D0 = reader.ReadUInt32();
             }
-                           
+
             BloomAmount = reader.ReadSingle();
             BloomDetail = reader.ReadSingle();
             BloomWhiteLevel = reader.ReadSingle();
@@ -356,28 +367,43 @@ namespace ENVParser
                 Field238 = reader.ReadSingle();
                 Field23C = reader.ReadSingle();
             }
-            
-            GlareLength = reader.ReadSingle();
-            GlareChromaticAberration = reader.ReadSingle();
-            GlareDirection = reader.ReadSingle();
-            GlareMode = reader.ReadUInt32();
-            
+
+            if (this.GFSVersion >= 17843456)
+            {
+                GlareLength = reader.ReadSingle();
+                GlareChromaticAberration = reader.ReadSingle();
+                GlareDirection = reader.ReadSingle();
+                GlareMode = reader.ReadUInt32();
+            }
+
             // Unknown Section
-            Field250 = reader.ReadBoolean();
-            Field251 = reader.ReadUInt32();
+            if (this.GFSVersion >= 17846352)
+            {
+                Field250 = reader.ReadBoolean();
+                Field251 = reader.ReadUInt32();
+            }
+
             if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
             {
                 Field255 = reader.ReadSingle();
             }
-            Field259 = reader.ReadSingle();
-            Field25D = reader.ReadSingle();
+
+            if (this.GFSVersion >= 17846352)
+            {
+                Field259 = reader.ReadSingle();
+                Field25D = reader.ReadSingle();
+            }
             EnableDOF = reader.ReadBoolean();
             DOF_FocalPlane = reader.ReadSingle();
             DOF_NearBlurPlane = reader.ReadSingle();
             DOF_FarBlurPlane = reader.ReadSingle();
             DOF_FarBlurLimit = reader.ReadSingle();
             DOF_BlurScale = reader.ReadSingle();
-            DOF_GaussType = reader.ReadUInt32();
+
+            if (this.GFSVersion >= 17846288)
+            {
+                DOF_GaussType = reader.ReadUInt32();
+            }
             EnableSSAO = reader.ReadBoolean();
             SSAO_OccluderRadius = reader.ReadSingle();
             SSAO_FallOffRadius = reader.ReadSingle();
@@ -385,7 +411,7 @@ namespace ENVParser
             SSAO_Brightness = reader.ReadSingle();
             SSAO_DepthRange = reader.ReadSingle();
             DisableUnknownFlaggedSection = reader.ReadBoolean();
-            
+
             // Field Shadow Section
             FieldShadowFarClip = reader.ReadSingle();
             Field294 = reader.ReadSingle();
@@ -422,11 +448,20 @@ namespace ENVParser
             EnableOutline = reader.ReadBoolean();
             OutlineOpacity = reader.ReadSingle();
             OutlineWidth = reader.ReadSingle();
-            CharacterOutlineBrightness = reader.ReadSingle();
-            Field2F2 = reader.ReadSingle();
-            Field2F6 = reader.ReadSingle();
+
+            if (this.GFSVersion >= 17844592)
+            {
+                CharacterOutlineBrightness = reader.ReadSingle();
+            }
+
+            if (this.GFSVersion >= 17846320)
+            {
+
+                Field2F2 = reader.ReadSingle();
+                Field2F6 = reader.ReadSingle();
+            }
             ReflectionHeight = reader.ReadSingle();
-            
+
             // Physics Section
             EnablePhysicsSection = reader.ReadBoolean();
             Gravity = reader.ReadSingle();
@@ -438,15 +473,18 @@ namespace ENVParser
             WindStrengthModifier = reader.ReadSingle();
             WindCycleTime = reader.ReadSingle();
             WindCycleDelay = reader.ReadSingle();
-            
+
             // Clear Colour Section
             ClearColourRed = reader.ReadByte();
             ClearColourGreen = reader.ReadByte();
             ClearColourBlue = reader.ReadByte();
             ClearColourAlpha = reader.ReadByte();
-            
-            
-            Field324 = reader.ReadUInt32();
+
+            if (this.GFSVersion >= 17843968)
+            {
+                Field324 = reader.ReadUInt32();
+            }
+
             if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
             {
                 Field328 = reader.ReadUInt32();
@@ -541,7 +579,7 @@ namespace ENVParser
             writer.Write(EnableBloom);
             writer.Write(EnableGlare);
             writer.Write(Field1CC);
-            
+
             // P5R Only Fields
             if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
             {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ENVParser.Fields
+﻿namespace ENVParser.Fields
 {
+    // This class can be potentially deprecated
+    [Obsolete]
     internal class P5ROnlyFieldsProvider
     {
         private static readonly HashSet<string> _P5RUniqueFields =

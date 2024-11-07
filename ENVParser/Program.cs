@@ -39,6 +39,7 @@ internal class Program
         {
             try
             {
+                throw new NotImplementedException("Functionality Temporarily Disabled");
                 string jsonString = File.ReadAllText(filePath);
                 var deserialisedJson = JsonImporter.DeserialiseJson(jsonString);
 
@@ -77,7 +78,11 @@ internal class Program
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"EXCEPTION\t{ex.GetType().Name}");
+                Console.WriteLine($"EXCEPTION\t{ex.Message}");
+                Console.ResetColor();
+                Console.ReadKey(true);
             }
             return;
         }
@@ -85,14 +90,18 @@ internal class Program
         {
             try
             {
-                // Call the Read method to populate the envFile instance
+                // Call the Read method to populate the envFileHeader instance
+                long envFileSize = new FileInfo(filePath).Length;
                 using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
                 using BigEndianBinaryReader reader = new(fileStream);
                 envFileHeader.ReadHeader(reader);
 
                 // Validation on GFS header
                 // Use the enum from the class - though when refactoring lets pull this into its own class
-                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFileHeader.GFSVersion,true);                              
+                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFileHeader.GFSVersion, true);
+
+                // Validation on file size against version header
+                EnvValidator.Validate(envFileHeader, envFileSize);
 
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
@@ -100,16 +109,16 @@ internal class Program
 
                 // Determine the output and write it
                 string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
-                    ? "csv" 
+                    ? "csv"
                     : "json";
                 string outputFile = Path.GetFullPath(filePath).ToString().Replace(".ENV", $".ENV.{outputFileExtension}");
 
-                IExporter exporter = outputFileExtension == "csv" ? new CsvExporter() : new JsonExporter();                
+                IExporter exporter = outputFileExtension == "csv" ? new CsvExporter() : new JsonExporter();
                 exporter.Export(outputFile, envFile);
-                
+
                 // Update the user
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"OK\tConversion to {outputFileExtension} complete");
+                Console.WriteLine($"OK\tConversion to {outputFileExtension.ToUpper()} complete");
                 Console.ResetColor();
                 Console.WriteLine($"INFO\t{outputFileExtension.ToUpper()} file created at: '{outputFile}'");
                 Console.WriteLine("\nPress Enter to close this window");
@@ -118,8 +127,9 @@ internal class Program
             catch (Exception ex)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine();
                 Console.WriteLine($"EXCEPTION\t{ex.GetType().Name}");
-                Console.WriteLine($"EXCEPTION\t{ex.Message}");
+                Console.WriteLine($"EXCEPTION\t{ex}");
                 Console.ResetColor();
             }
             return;
