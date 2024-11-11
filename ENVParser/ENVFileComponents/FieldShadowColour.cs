@@ -1,0 +1,25 @@
+﻿using ENVParser.Fields;
+using ENVParser.Utils;
+
+namespace ENVParser.ENVFileComponents
+{
+    internal sealed class FieldShadowColour : IEnvFileSectionVersionSpecific<FieldShadowColour>
+    {
+        public float ShadowColourRed { get; set; }
+        public float ShadowColourGreen { get; set; }
+        public float ShadowColourBlue { get; set; }
+        public float ShadowColourAlpha { get; set; }
+
+        public FieldShadowColour Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
+        {
+            if (GameVersion == ValidVersionHeaderProvider.GameVersions.P5Royal)
+            {
+                ShadowColourRed = reader.ReadSingle();
+                ShadowColourGreen = reader.ReadSingle();
+                ShadowColourBlue = reader.ReadSingle();
+                ShadowColourAlpha = reader.ReadSingle();
+            }
+            return this;
+        }
+    }
+}
