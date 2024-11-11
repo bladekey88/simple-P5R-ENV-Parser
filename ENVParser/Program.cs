@@ -31,7 +31,7 @@ internal class Program
         }
 
         // Prepare object for use.
-        EnvFile envFile = [];
+        EnvFile envFile = new();
         EnvFile envFileHeader = [];
 
         // Process Files
@@ -94,11 +94,10 @@ internal class Program
                 long envFileSize = new FileInfo(filePath).Length;
                 using FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read);
                 using BigEndianBinaryReader reader = new(fileStream);
-                envFileHeader.ReadHeader(reader);
 
                 // Validation on GFS header
                 // Use the enum from the class - though when refactoring lets pull this into its own class
-                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFileHeader.GFSVersion, true);
+                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFileHeader.ReadHeader(reader).GFSVersion, true);
 
                 // Validation on file size against version header
                 EnvValidator.Validate(envFileHeader, envFileSize);
@@ -106,6 +105,7 @@ internal class Program
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 envFile.Read(reader);
+
 
                 // Determine the output and write it
                 string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
