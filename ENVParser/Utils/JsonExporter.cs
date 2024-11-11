@@ -1,6 +1,7 @@
 ﻿using ENVParser.Fields;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Reflection;
 
 namespace ENVParser.Utils
 {
@@ -22,84 +23,74 @@ namespace ENVParser.Utils
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
 
-            // Derive GameVersion
-            ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
-
-            // Use a list to store the transformed data
-            List<JsonOutput> fields = [];
-
             // Get valid fields for GFS Version
             List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);
 
-            foreach (var data in envFile)
+            // Dictionary to hold final values for serialisation
+            Dictionary<string, Object> output = [];
+
+            // Use reflection to get the values out
+            foreach (PropertyInfo pi in envFile.GetType().GetProperties())
             {
-                // unpack tuple and save into appropriate fields 
-                var (fieldName, fieldValue) = data;
-                var fieldType = "f32";  // Sets up variable
-
-                // Skip fields based on version number
-                if (!validFields.Contains(fieldName))
+                object propertyValue = pi.GetValue(envFile);
+                if (propertyValue != null)
                 {
-                    continue;
-                }
-
-                // Use a switch to get friendly type names
-                // Enables consistency with ENV Template
-                switch (fieldValue)
-                {
-                    case bool:
-                        fieldType = "boolean";
-                        break;
-                    case UInt32:
-                        fieldType = "u32";
-                        break;
-                    case float:
-                        fieldType = "f32";
-                        break;
-                    case byte:
-                        fieldType = "u8";
-                        break;
-                    default:
-                        break;
-                }
-
-                // Handle the unused Texture Section separately to everything else
-                if (fieldName == "UnusedTextureSection")
-                {
-                    // Explicit cast here to byte array to allow access to LINQ
-                    // Hardcode the type field, since it doesn't change
-                    byte[] reserveValues = (byte[])fieldValue;
-                    foreach (var val in reserveValues.Select((value, index) => new { value, index }))
+                    if (propertyValue.GetType().IsClass)
                     {
-                        JsonOutput output = new()
+                        List<object> innerDict = [];
+                        // Recursively iterate over nested objects
+                        foreach (PropertyInfo nestedPropertyInfo in propertyValue.GetType().GetProperties())
                         {
-                            FieldName = $"Reserve[{val.index}]",
-                            FieldValue = JToken.FromObject(val.value),
-                            RGBValue = null,
-                            FieldType = "u8"
-                        };
-                        fields.Add(output);
+                            var fieldType = "f32";  // Sets up variable
+
+                            // Skip fields based on version number
+                            if (!validFields.Contains(nestedPropertyInfo.Name))
+                            {
+                                continue;
+                            }
+
+                            object nestedPropertyValue = nestedPropertyInfo.GetValue(propertyValue);
+                            switch (nestedPropertyValue)
+                            {
+                                case bool:
+                                    fieldType = "boolean";
+                                    break;
+                                case UInt32:
+                                    fieldType = "u32";
+                                    break;
+                                case float:
+                                    fieldType = "f32";
+                                    break;
+                                case byte:
+                                    fieldType = "u8";
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            JsonOutput jsonOutput = new()
+                            {
+                                FieldName = nestedPropertyInfo.Name,
+                                FieldValue = nestedPropertyValue != null ? JToken.FromObject(nestedPropertyValue) : null,
+                                RGBValue = _validFieldsForRGBValues.Contains(nestedPropertyInfo.Name) ? GetRGBValue(nestedPropertyValue) : null,
+                                FieldType = fieldType,
+                                Comment = pi.Name.Contains("FieldModelLight1") || pi.Name.Contains("FieldModelLight2") ? "SECTION UNUSED IN P5/P5B/P5R" : null
+                            };
+
+                            innerDict.Add(jsonOutput);
+                        }
+                        output.Add(pi.Name, innerDict);
                     }
                 }
-                else
-                {
-                    JsonOutput output = new()
-                    {
-                        FieldName = fieldName,
-                        FieldValue = fieldValue != null ? JToken.FromObject(fieldValue) : null,
-                        RGBValue = _validFieldsForRGBValues.Contains(fieldName) ? GetRGBValue(fieldValue) : null,
-                        FieldType = fieldType
-                    };
-                    fields.Add(output);
-                }
             }
-
             var settings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-            string json = JsonConvert.SerializeObject(fields, Formatting.Indented, settings);
+            string json = JsonConvert.SerializeObject(output, Formatting.Indented, settings);
             using StreamWriter sw = new(filePath);
             {
                 sw.Write(json);
             }
+
+            return;
         }
 
         // Defines the structure of JSON records
@@ -109,6 +100,7 @@ namespace ENVParser.Utils
             public JToken? FieldValue { get; set; }
             public float? RGBValue { get; set; }
             public string FieldType { get; set; }
+            public string? Comment { get; set; }
         }
 
         private static float? GetRGBValue(object value)
