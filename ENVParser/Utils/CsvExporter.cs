@@ -1,6 +1,4 @@
-﻿using CsvHelper;
-using ENVParser.Fields;
-using System.Globalization;
+﻿using ENVParser.Fields;
 
 namespace ENVParser.Utils
 {
@@ -29,34 +27,38 @@ namespace ENVParser.Utils
                 throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
-
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("ERROR\tAn error occurred");
+            Console.WriteLine("REASON\tCSV EXPORT DISABLED PENDING RE-WRITE. USE AN OLDER VERSION");
+            Console.ResetColor();
+            throw new NotImplementedException();
             // Derive GameVersion
-            ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
+            //ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
 
             // Get valid fields for GFS Version
-            List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);
+            //List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);
 
 
             // As this is a one-way transfer
             // No need for special override for Texture Section so, can override value to 0
             // However also need to do a game version check to remove unneeded fields
-            var csvData = envFile.Where(data =>
-            {
-                // This statement is used to not select the fields missing from the HashSet if we don't use P5R
-                // thus not passing them to the CSV generator below
-                return (validFields.Contains(data.Key));
-            }).Select(data => new CsvOutput
-            {
-                FieldName = data.Key,
-                Value = !data.Key.Equals("UnusedTextureSection", StringComparison.Ordinal) ? data.Value.ToString() : "0",
-                RGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value) : null,
-                FieldType = TextReadableFieldType(data.Value.GetType().Name),
-            }
-            ).ToList();
+            //var csvData = envFile.Where(data =>
+            //{
+            //    // This statement is used to not select the fields missing from the HashSet if we don't use P5R
+            //    // thus not passing them to the CSV generator below
+            //    return (validFields.Contains(data.Key));
+            //}).Select(data => new CsvOutput
+            //{
+            //    FieldName = data.Key,
+            //    Value = !data.Key.Equals("UnusedTextureSection", StringComparison.Ordinal) ? data.Value.ToString() : "0",
+            //    RGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value) : null,
+            //    FieldType = TextReadableFieldType(data.Value.GetType().Name),
+            //}
+            //).ToList();
 
-            using var writer = new StreamWriter(filePath);
-            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            csv.WriteRecords(csvData);
+            //using var writer = new StreamWriter(filePath);
+            //using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            //csv.WriteRecords(csvData);
         }
 
         private static string TextReadableFieldType(string fieldType)
