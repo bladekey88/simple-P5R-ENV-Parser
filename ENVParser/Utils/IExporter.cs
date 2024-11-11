@@ -1,6 +1,4 @@
-﻿using ENVParser;
-
-internal interface IExporter
+﻿internal interface IExporter
 {
-    public void Export(string filePath, EnvFile envFile) { }
+    public void Export(string filePath, ENVParser.EnvFile envFile) { }
 }
