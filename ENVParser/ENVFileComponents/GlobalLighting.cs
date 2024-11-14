@@ -1,9 +1,10 @@
 ﻿using ENVParser.Fields;
 using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal sealed class GlobalLighting : IEnvFileSectionVersionSpecific<GlobalLighting>
+    internal sealed class GlobalLighting : BaseEnvSection, IEnvFileSectionVersionSpecific<GlobalLighting>
     {
         public bool EnableGraphicOutput { get; set; }
         public bool EnableBloom { get; set; }

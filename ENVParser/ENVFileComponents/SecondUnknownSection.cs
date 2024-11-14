@@ -1,9 +1,10 @@
 ﻿using ENVParser.Fields;
 using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class SecondUnknownSection : IEnvFileSectionVersionSpecific<SecondUnknownSection>
+    internal class SecondUnknownSection : BaseEnvSection, IEnvFileSectionVersionSpecific<SecondUnknownSection>
     {
         public float LightMapR { get; set; }
         public float LightMapG { get; set; }
@@ -16,6 +17,7 @@ namespace ENVParser.ENVFileComponents
         public float Field2F2 { get; set; }
         public float Field2F6 { get; set; }
         public float ReflectionHeight { get; set; }
+        
         public SecondUnknownSection Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             LightMapR = reader.ReadSingle();

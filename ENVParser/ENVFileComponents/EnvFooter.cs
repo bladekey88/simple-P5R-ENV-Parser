@@ -1,9 +1,10 @@
 ﻿using ENVParser.Fields;
 using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal sealed class EnvFooter : IEnvFileSectionVersionSpecific<EnvFooter>
+    internal sealed class EnvFooter : BaseEnvSection, IEnvFileSectionVersionSpecific<EnvFooter>
     {
         public uint Field324 { get; set; }
         public uint Field328 { get; set; }
@@ -12,6 +13,7 @@ namespace ENVParser.ENVFileComponents
         public uint Field334 { get; set; }
         public byte Field338 { get; set; }
 
+        
         public EnvFooter Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             if (GFSVersion >= 17843968)

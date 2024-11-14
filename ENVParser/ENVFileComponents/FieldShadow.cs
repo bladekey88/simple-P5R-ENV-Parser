@@ -1,8 +1,9 @@
 ﻿using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class FieldShadow : IEnvFileSection<FieldShadow>
+    internal sealed class FieldShadow : BaseEnvSection, IEnvFileSection<FieldShadow>
     {
         public float FieldShadowFarClip { get; set; }
         public float Field294 { get; set; }

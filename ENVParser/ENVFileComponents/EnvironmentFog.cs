@@ -1,8 +1,9 @@
 ﻿using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal sealed class EnvironmentFog : IEnvFileSection<EnvironmentFog>
+    internal sealed class EnvironmentFog : BaseEnvSection, IEnvFileSection<EnvironmentFog>
     {
         public bool EnableFog { get; set; }
         public bool EnableAmbientFog { get; set; }
@@ -21,8 +22,7 @@ namespace ENVParser.ENVFileComponents
         public float FloorFogGreen { get; set; }
         public float FloorFogBlue { get; set; }
         public float FloorFogOpacity { get; set; }
-
-
+        
         public EnvironmentFog Read(BigEndianBinaryReader reader)
         {
             EnableFog = reader.ReadBoolean();

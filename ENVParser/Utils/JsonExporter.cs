@@ -16,12 +16,16 @@ namespace ENVParser.Utils
         }
 
         public void Export(string filePath, EnvFile envFile)
-        {
+        {            
             if (string.IsNullOrEmpty(filePath))
             {
                 throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");
             }
-            string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
+
+            if (Path.GetDirectoryName(filePath) is null)
+            {
+                throw new InvalidOperationException("Failed to get directory name from file path.");
+            }
 
             // Get valid fields for GFS Version
             List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);

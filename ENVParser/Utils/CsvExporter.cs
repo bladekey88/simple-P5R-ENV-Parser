@@ -1,4 +1,7 @@
-﻿using ENVParser.Fields;
+﻿using CsvHelper;
+using ENVParser.Fields;
+using System.Globalization;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ENVParser.Utils
 {
@@ -13,6 +16,7 @@ namespace ENVParser.Utils
             public string Value { get; set; }
             public float? RGBValue { get; set; }
             public string FieldType { get; set; }
+            public string? Comments { get; set; }
         }
 
         public CsvExporter()
@@ -27,20 +31,37 @@ namespace ENVParser.Utils
                 throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("ERROR\tAn error occurred");
-            Console.WriteLine("REASON\tCSV EXPORT DISABLED PENDING RE-WRITE. USE AN OLDER VERSION");
-            Console.ResetColor();
-            throw new NotImplementedException();
+
+
             // Derive GameVersion
-            //ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
+            ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
 
             // Get valid fields for GFS Version
-            //List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);
+            List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);
 
+            // Create output dictionary
+            List<CsvOutput> csvData = [];
 
-            // As this is a one-way transfer
-            // No need for special override for Texture Section so, can override value to 0
+            foreach (var data in envFile)
+            {
+                if (!validFields.Contains(data.Key)) { continue; }
+                var fieldValue = data.Value;
+                var fieldRGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value) : null;
+                var fieldType= TextReadableFieldType(data.Value.GetType().Name);
+
+                CsvOutput innerList = new()
+                {
+                    FieldName = data.Key,
+                    Value = data.Value.ToString(),
+                    RGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value) : null,
+                    FieldType = TextReadableFieldType(data.Value.GetType().Name),
+                };
+                csvData.Add(innerList);
+            }
+
+            // Obsolete Code - remove when ready
+            //As this is a one - way transfer
+            //No need for special override for Texture Section so, can override value to 0
             // However also need to do a game version check to remove unneeded fields
             //var csvData = envFile.Where(data =>
             //{
@@ -50,15 +71,15 @@ namespace ENVParser.Utils
             //}).Select(data => new CsvOutput
             //{
             //    FieldName = data.Key,
-            //    Value = !data.Key.Equals("UnusedTextureSection", StringComparison.Ordinal) ? data.Value.ToString() : "0",
+            //    Value = data.Value.ToString(),
             //    RGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value) : null,
             //    FieldType = TextReadableFieldType(data.Value.GetType().Name),
             //}
             //).ToList();
 
-            //using var writer = new StreamWriter(filePath);
-            //using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
-            //csv.WriteRecords(csvData);
+            using var writer = new StreamWriter(filePath);
+            using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
+            csv.WriteRecords(csvData);
         }
 
         private static string TextReadableFieldType(string fieldType)
@@ -82,6 +103,10 @@ namespace ENVParser.Utils
                 case "Byte[]":
                     readableFieldType = "Byte Array";
                     break;
+                case "String":
+                    readableFieldType = "";
+                    break;
+                        
 
                 default:
                     Console.WriteLine($"Unhandled data type: {fieldType}");

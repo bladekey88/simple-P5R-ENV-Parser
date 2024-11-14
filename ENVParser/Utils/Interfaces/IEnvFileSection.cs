@@ -1,6 +1,6 @@
 ﻿using ENVParser.Fields;
 
-namespace ENVParser.Utils
+namespace ENVParser.Utils.Interfaces
 {
     internal interface IEnvFileSectionVersionSpecific<T>
     {

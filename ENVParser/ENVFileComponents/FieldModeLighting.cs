@@ -1,8 +1,9 @@
 ﻿using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class FieldModeLighting : IEnvFileSection<FieldModeLighting>
+    internal sealed class FieldModeLighting : BaseEnvSection,  IEnvFileSection<FieldModeLighting>
     {
         public byte LightType { get; set; }
         public bool EnableFieldModelSection { get; set; }
@@ -29,6 +30,7 @@ namespace ENVParser.ENVFileComponents
         public float FieldModelLightX { get; set; }
         public float FieldModelLightY { get; set; }
         public float FieldModelLightZ { get; set; }
+       
 
         public FieldModeLighting Read(BigEndianBinaryReader reader)
         {

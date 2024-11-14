@@ -32,7 +32,7 @@ internal class Program
 
         // Prepare object for use.
         EnvFile envFile = new();
-        EnvFile envFileHeader = [];
+        EnvFile envFileHeader = new();
 
         // Process Files
         if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
@@ -105,8 +105,8 @@ internal class Program
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 envFile.Read(reader);
-
-
+              
+               
                 // Determine the output and write it
                 string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
                     ? "csv"

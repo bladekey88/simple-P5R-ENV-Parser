@@ -1,9 +1,10 @@
 ﻿using ENVParser.Fields;
 using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class UnknownSection : IEnvFileSectionVersionSpecific<UnknownSection>
+    internal sealed class UnknownSection : BaseEnvSection, IEnvFileSectionVersionSpecific<UnknownSection>
     {
         public bool Field250 { get; set; }
         public uint Field251 { get; set; }
@@ -23,7 +24,7 @@ namespace ENVParser.ENVFileComponents
         public float SSAO_BlurScale { get; set; }
         public float SSAO_Brightness { get; set; }
         public float SSAO_DepthRange { get; set; }
-        public bool DisableUnknownFlaggedSection { get; set; }
+        public bool DisableUnknownFlaggedSection { get; set; }      
 
         public UnknownSection Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {

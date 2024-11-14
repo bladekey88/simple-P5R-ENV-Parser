@@ -1,14 +1,16 @@
 ﻿using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
+using System.Collections.Generic;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class EnvHeader : IEnvFileSection<EnvHeader>
+    internal sealed class EnvHeader : BaseEnvSection, IEnvFileSection<EnvHeader>
     {
         public uint FileMagic { get; set; }
         public uint GFSVersion { get; set; }
         public uint FileType { get; set; }
-        public uint Field0C { get; set; }
-
+        public uint Field0C { get; set; }       
+        
         public EnvHeader Read(BigEndianBinaryReader reader)
         {
             FileMagic = reader.ReadUInt32();
