@@ -32,5 +32,21 @@ namespace ENVParser.ENVFileComponents
             Field2AF = reader.ReadBoolean();
             return this;
         }
+
+        public FieldShadow Write(BigEndianBinaryWriter writer)
+        {
+            writer.Write(FieldShadowFarClip);
+            writer.Write(Field294);
+            writer.Write(AmbientShadowBrightness);
+            writer.Write(Field29C);
+            writer.Write(Field2A0);
+            writer.Write(FieldShadowNearClip);
+            writer.Write(FieldShadowBrightness);
+            writer.Write(Field2AC);
+            writer.Write(Field2AD);
+            writer.Write(Field2AE);
+            writer.Write(Field2AF);
+            return this;
+        }
     }
 }

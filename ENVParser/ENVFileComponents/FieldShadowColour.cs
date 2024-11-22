@@ -22,5 +22,18 @@ namespace ENVParser.ENVFileComponents
             }
             return this;
         }
+
+        public FieldShadowColour Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
+        {
+            if (GameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                writer.Write(ShadowColourRed);
+                writer.Write(ShadowColourGreen);
+                writer.Write(ShadowColourBlue);
+                writer.Write(ShadowColourAlpha);
+            }
+            return this;
+        }
+
     }
 }
