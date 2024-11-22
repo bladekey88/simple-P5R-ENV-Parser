@@ -5,6 +5,7 @@ using ENVParser.Utils.Interfaces;
 namespace ENVParser.ENVFileComponents
 {
     internal sealed class CharacterModelLighting : BaseEnvSection, IEnvFileSectionVersionSpecific<CharacterModelLighting>
+
     {
         public byte LightType { get; set; }
         public bool EnableCharacterModelSection { get; set; }
@@ -34,6 +35,7 @@ namespace ENVParser.ENVFileComponents
         public float Field188 { get; set; }
         public float ModelNearClip { get; set; }
         public float ModelFarClip { get; set; }       
+
 
         public CharacterModelLighting Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {

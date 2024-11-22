@@ -62,7 +62,6 @@ namespace ENVParser.ENVFileComponents
                 Field1CF = reader.ReadBoolean();
                 Field1D0 = reader.ReadUInt32();
             }
-
             BloomAmount = reader.ReadSingle();
             BloomDetail = reader.ReadSingle();
             BloomWhiteLevel = reader.ReadSingle();

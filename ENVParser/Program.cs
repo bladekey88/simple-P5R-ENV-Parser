@@ -40,7 +40,6 @@ internal class Program
         {
             try
             {
-
                 string jsonString = File.ReadAllText(filePath);
                 JsonImporter2.DeserialiseJson(jsonString,envFile);
                 
@@ -115,8 +114,7 @@ internal class Program
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 envFile.Read(reader);
-              
-               
+
                 // Determine the output and write it
                 string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
                     ? "csv"

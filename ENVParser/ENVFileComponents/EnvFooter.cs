@@ -13,7 +13,6 @@ namespace ENVParser.ENVFileComponents
         public uint Field334 { get; set; }
         public byte Field338 { get; set; }
 
-        
         public EnvFooter Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             if (GFSVersion >= 17843968)
