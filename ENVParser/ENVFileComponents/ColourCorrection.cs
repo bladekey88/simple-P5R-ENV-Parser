@@ -22,5 +22,16 @@ namespace ENVParser.ENVFileComponents
             Burn = reader.ReadSingle();
             return this;
         }
+
+        public ColourCorrection Write(BigEndianBinaryWriter writer)
+        {
+            writer.Write(DisplayColourGrading);
+            writer.Write(Cyan);
+            writer.Write(Magenta);
+            writer.Write(Yellow);
+            writer.Write(Dodge);
+            writer.Write(Burn);
+            return this;
+        }
     }
 }
