@@ -31,25 +31,5 @@ namespace ENVParser.ENVFileComponents
             }
             return this;
         }
-
-        public EnvFooter Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
-        {
-            if (GFSVersion >= 17843968)
-            {
-                writer.Write(Field324);
-            }
-
-            if (GameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-            {
-                writer.Write(Field328);
-                writer.Write(Field32C);
-                writer.Write(Field330);
-                writer.Write(Field334);
-                writer.Write(Field338);
-            }
-            return this;
-        }
-
-
     }
 }

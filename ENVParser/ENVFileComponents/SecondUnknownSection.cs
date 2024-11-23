@@ -43,29 +43,5 @@ namespace ENVParser.ENVFileComponents
 
             return this;
         }
-
-        public SecondUnknownSection Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
-        {
-            writer.Write(LightMapR);
-            writer.Write(LightMapG);
-            writer.Write(LightMapB);
-            writer.Write(LightMapA);
-            writer.Write(EnableOutline);
-            writer.Write(OutlineOpacity);
-            writer.Write(OutlineWidth);
-            
-            if (GFSVersion >= 17844592)
-            {
-                writer.Write(CharacterOutlineBrightness);
-            }
-
-            if (GFSVersion >= 17846320)
-            {
-                writer.Write(Field2F2);
-                writer.Write(Field2F6);
-            }   
-            writer.Write(ReflectionHeight);
-            return this;
-        }
     }
 }

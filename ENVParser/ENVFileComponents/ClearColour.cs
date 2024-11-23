@@ -10,22 +10,13 @@ namespace ENVParser.ENVFileComponents
         public byte ClearColourBlue { get; set; }
         public byte ClearColourAlpha { get; set; }
 
-
+        
         public ClearColour Read(BigEndianBinaryReader reader)
         {
             ClearColourRed = reader.ReadByte();
             ClearColourGreen = reader.ReadByte();
             ClearColourBlue = reader.ReadByte();
             ClearColourAlpha = reader.ReadByte();
-            return this;
-        }
-
-        public ClearColour Write(BigEndianBinaryWriter writer)
-        {
-            writer.Write(ClearColourRed);
-            writer.Write(ClearColourGreen);
-            writer.Write(ClearColourBlue);
-            writer.Write(ClearColourAlpha);
             return this;
         }
     }

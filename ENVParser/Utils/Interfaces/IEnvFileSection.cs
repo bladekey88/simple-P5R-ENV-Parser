@@ -13,6 +13,4 @@ namespace ENVParser.Utils.Interfaces
     }
 
 
-
-
 }

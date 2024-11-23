@@ -65,44 +65,5 @@ namespace ENVParser.ENVFileComponents
 
             return this;
         }
-
-        public UnknownSection Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion) 
-        {
-            if (GFSVersion >= 17846352)
-            {
-                writer.Write(Field250);
-                writer.Write(Field251);
-            }
-
-            if (GameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-            {
-                writer.Write(Field255);
-            }
-
-            if (GFSVersion >= 17846352)
-            {
-                writer.Write(Field259);
-                writer.Write(Field25D);
-            }
-            writer.Write(EnableDOF);
-            writer.Write(DOF_FocalPlane);
-            writer.Write(DOF_NearBlurPlane);
-            writer.Write(DOF_FarBlurPlane);
-            writer.Write(DOF_FarBlurLimit);
-            writer.Write(DOF_BlurScale);
-            
-            if (GFSVersion >= 17846288)
-            {                
-            writer.Write(DOF_GaussType);
-            }
-            writer.Write(EnableSSAO);
-            writer.Write(SSAO_OccluderRadius);
-            writer.Write(SSAO_FallOffRadius);
-            writer.Write(SSAO_BlurScale);
-            writer.Write(SSAO_Brightness);
-            writer.Write(SSAO_DepthRange);
-            writer.Write(DisableUnknownFlaggedSection);
-            return this; 
-        }
     }
 }

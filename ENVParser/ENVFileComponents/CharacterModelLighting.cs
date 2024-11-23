@@ -70,41 +70,5 @@ namespace ENVParser.ENVFileComponents
             ModelFarClip = reader.ReadSingle();
             return this;
         }
-
-        public CharacterModelLighting Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
-        {
-            if (GFSVersion >= 17842768)
-            {
-                writer.Write(LightType);
-                writer.Write(EnableCharacterModelSection);
-                writer.Write(CharacterModelAmbientRed);
-                writer.Write(CharacterModelAmbientGreen);
-                writer.Write(CharacterModelAmbientBlue);
-                writer.Write(CharacterModelAmbientAlpha);
-                writer.Write(CharacterModelDiffuseRed);
-                writer.Write(CharacterModelDiffuseGreen);
-                writer.Write(CharacterModelDiffuseBlue);
-                writer.Write(CharacterModelDiffuseAlpha);
-                writer.Write(CharacterModelSpecularRed);
-                writer.Write(CharacterModelSpecularGreen);
-                writer.Write(CharacterModelSpecularBlue);
-                writer.Write(CharacterModelSpecularAlpha);
-                writer.Write(CharacterModelEmissiveRed);
-                writer.Write(CharacterModelEmissiveGreen);
-                writer.Write(CharacterModelEmissiveBlue);
-                writer.Write(CharacterModelEmissiveAlpha);
-                writer.Write(Field16C);
-                writer.Write(Field170);
-                writer.Write(Field174);
-                writer.Write(Field178);
-                writer.Write(CharacterModelLightX);
-                writer.Write(CharacterModelLightY);
-                writer.Write(CharacterModelLightZ);
-            }
-            writer.Write(Field188);
-            writer.Write(ModelNearClip);
-            writer.Write(ModelFarClip);
-            return this;
-        }
     }
 }

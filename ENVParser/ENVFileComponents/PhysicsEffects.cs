@@ -30,19 +30,5 @@ namespace ENVParser.ENVFileComponents
                 WindCycleDelay = reader.ReadSingle();
                 return this;
         }
-
-        public PhysicsEffects Write(BinaryWriter writer) {
-            writer.Write(EnablePhysicsSection);
-            writer.Write(Gravity);
-            writer.Write(EnableWind);
-            writer.Write(WindDirectionX);
-            writer.Write(WindDirectionY);
-            writer.Write(WindDirectionZ);
-            writer.Write(WindStrength);
-            writer.Write(WindStrengthModifier);
-            writer.Write(WindCycleTime);
-            writer.Write(WindCycleDelay);
-            return this;
-        }
     }
 }

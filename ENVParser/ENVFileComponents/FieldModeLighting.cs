@@ -1,6 +1,5 @@
 ﻿using ENVParser.Utils;
 using ENVParser.Utils.Interfaces;
-using Microsoft.VisualBasic.FileIO;
 
 namespace ENVParser.ENVFileComponents
 {
@@ -62,37 +61,6 @@ namespace ENVParser.ENVFileComponents
             FieldModelLightY = reader.ReadSingle();
             FieldModelLightZ = reader.ReadSingle();
             return this;
-        }
-
-        public FieldModeLighting Write(BigEndianBinaryWriter writer)
-        {
-            writer.Write(LightType);
-            writer.Write(EnableFieldModelSection);
-            writer.Write(FieldModelAmbientRed);
-            writer.Write(FieldModelAmbientGreen);
-            writer.Write(FieldModelAmbientBlue);
-            writer.Write(FieldModelAmbientAlpha);
-            writer.Write(FieldModelDiffuseRed);
-            writer.Write(FieldModelDiffuseGreen);
-            writer.Write(FieldModelDiffuseBlue);
-            writer.Write(FieldModelDiffuseAlpha);
-            writer.Write(FieldModelSpecularRed);
-            writer.Write(FieldModelSpecularGreen);
-            writer.Write(FieldModelSpecularBlue);
-            writer.Write(FieldModelSpecularAlpha);
-            writer.Write(FieldModelEmissiveRed);
-            writer.Write(FieldModelEmissiveGreen);
-            writer.Write(FieldModelEmissiveBlue);
-            writer.Write(FieldModelEmissiveAlpha);
-            writer.Write(Field52);
-            writer.Write(Field56);
-            writer.Write(Field5A);
-            writer.Write(Field5E);
-            writer.Write(FieldModelLightX);
-            writer.Write(FieldModelLightY);
-            writer.Write(FieldModelLightZ);
-            return this;
-       
         }
     }
 }
