@@ -1,7 +1,6 @@
 ﻿using CsvHelper;
 using ENVParser.Fields;
 using System.Globalization;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ENVParser.Utils
 {
@@ -47,7 +46,7 @@ namespace ENVParser.Utils
                 if (!validFields.Contains(data.Key)) { continue; }
                 var fieldValue = data.Value;
                 var fieldRGBValue = _validFieldsForRGBValues.Contains(data.Key) ? GetRGBValue(data.Value) : null;
-                var fieldType= TextReadableFieldType(data.Value.GetType().Name);
+                var fieldType = TextReadableFieldType(data.Value.GetType().Name);
 
                 CsvOutput innerList = new()
                 {
@@ -106,7 +105,7 @@ namespace ENVParser.Utils
                 case "String":
                     readableFieldType = "";
                     break;
-                        
+
 
                 default:
                     Console.WriteLine($"Unhandled data type: {fieldType}");

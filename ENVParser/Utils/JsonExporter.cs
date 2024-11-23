@@ -16,7 +16,7 @@ namespace ENVParser.Utils
         }
 
         public void Export(string filePath, EnvFile envFile)
-        {            
+        {
             if (string.IsNullOrEmpty(filePath))
             {
                 throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");

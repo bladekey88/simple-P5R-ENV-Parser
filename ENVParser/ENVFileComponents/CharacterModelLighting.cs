@@ -33,7 +33,7 @@ namespace ENVParser.ENVFileComponents
         public float CharacterModelLightZ { get; set; }
         public float Field188 { get; set; }
         public float ModelNearClip { get; set; }
-        public float ModelFarClip { get; set; }       
+        public float ModelFarClip { get; set; }
 
         public CharacterModelLighting Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {

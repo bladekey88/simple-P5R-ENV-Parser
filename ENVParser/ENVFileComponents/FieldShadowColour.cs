@@ -10,7 +10,7 @@ namespace ENVParser.ENVFileComponents
         public float ShadowColourGreen { get; set; }
         public float ShadowColourBlue { get; set; }
         public float ShadowColourAlpha { get; set; }
-      
+
         public FieldShadowColour Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             if (GameVersion == ValidVersionHeaderProvider.GameVersions.P5Royal)

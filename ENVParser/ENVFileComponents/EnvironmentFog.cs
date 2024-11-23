@@ -22,7 +22,7 @@ namespace ENVParser.ENVFileComponents
         public float FloorFogGreen { get; set; }
         public float FloorFogBlue { get; set; }
         public float FloorFogOpacity { get; set; }
-        
+
         public EnvironmentFog Read(BigEndianBinaryReader reader)
         {
             EnableFog = reader.ReadBoolean();
@@ -64,7 +64,7 @@ namespace ENVParser.ENVFileComponents
             writer.Write(FloorFogGreen);
             writer.Write(FloorFogBlue);
             writer.Write(FloorFogOpacity);
-            return this; 
+            return this;
         }
     }
 }

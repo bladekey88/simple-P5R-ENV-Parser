@@ -2,7 +2,6 @@
 using ENVParser;
 using ENVParser.Fields;
 using ENVParser.Utils;
-using System.Collections;
 internal class Program
 {
     private static void Main(string[] args)
@@ -42,8 +41,8 @@ internal class Program
             {
 
                 string jsonString = File.ReadAllText(filePath);
-                JsonImporter2.DeserialiseJson(jsonString,envFile);
-                
+                JsonImporter2.DeserialiseJson(jsonString, envFile);
+
                 // After deserialisation check if valid version
                 ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.EnvHeader.GFSVersion, true);
 
@@ -59,8 +58,9 @@ internal class Program
 
                 // Write out to file
                 string outputENV = Path.GetFullPath(filePath).ToString().Replace(".ENV.json", ".ENV");
-               
-                if (Path.Exists(outputENV)) {
+
+                if (Path.Exists(outputENV))
+                {
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"WARN\t'{outputENV}' already exists and will be overwritten");
                     Console.WriteLine($"WARN\tOverwriting this file CANNOT be undone");
@@ -76,7 +76,7 @@ internal class Program
                 using var stream = new FileStream(outputENV, FileMode.Create, FileAccess.Write);
                 using BigEndianBinaryWriter writer = new(stream);
                 envFile.Write(writer);
-                
+
                 // Update the user
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine($"OK\tConversion to ENV complete");
@@ -115,8 +115,8 @@ internal class Program
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 envFile.Read(reader);
-              
-               
+
+
                 // Determine the output and write it
                 string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
                     ? "csv"

@@ -2,13 +2,7 @@
 using ENVParser.Fields;
 using ENVParser.Utils;
 using ENVParser.Utils.Interfaces;
-using System.Collections;
-using System.ComponentModel;
 using System.Reflection;
-using System.Collections.Generic;
-using static ENVParser.JsonImporter;
-using Microsoft.VisualBasic;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ENVParser
 {
@@ -70,7 +64,7 @@ namespace ENVParser
         }
 
         public void Add(Dictionary<string, object> dataObject)
-            // This hopefully will be generic may only be the JSON implementation
+        // This hopefully will be generic may only be the JSON implementation
         {
             foreach (var entry in dataObject)
             {
@@ -164,7 +158,7 @@ namespace ENVParser
             SecondUnknownEffects.Write(writer, GFSVersion, GameVersion);
             Physics.Write(writer);
             ClearColours.Write(writer);
-            EnvFooter.Write(writer, GFSVersion, GameVersion);            
+            EnvFooter.Write(writer, GFSVersion, GameVersion);
         }
 
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
@@ -173,46 +167,46 @@ namespace ENVParser
             {
                 yield return new KeyValuePair<string, object>("ENV Header", _sectionValue);
                 foreach (var component in EnvHeader) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Field Model Light 0", _sectionValue);
                 foreach (var component in FieldModelLight0) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Field Model Light 1", _sectionValue);
                 foreach (var component in FieldModelLight1) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Field Model Light 2", _sectionValue);
                 foreach (var component in FieldModelLight2) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Character Model Light", _sectionValue);
                 foreach (var component in CharacterModelLight) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Fog", _sectionValue);
                 foreach (var component in Fog) { yield return component; }
-               
+
                 yield return new KeyValuePair<string, object>("Global Lighting Effects", _sectionValue);
                 foreach (var component in GlobalLightingEffects) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Unknown Section", _sectionValue);
                 foreach (var component in UnknownEffects) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Field Shadows", _sectionValue);
                 foreach (var component in FieldShadows) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Field Shadows Colour", _sectionValue);
                 foreach (var component in FieldShadowColours) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Colour Corrections", _sectionValue);
                 foreach (var component in ColourCorrections) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Second Unknown Section", _sectionValue);
                 foreach (var component in SecondUnknownEffects) { yield return component; }
-               
+
                 yield return new KeyValuePair<string, object>("Physics", _sectionValue);
                 foreach (var component in Physics) { yield return component; }
-                
+
                 yield return new KeyValuePair<string, object>("Clear Colours", _sectionValue);
                 foreach (var component in ClearColours) { yield return component; }
-               
+
                 yield return new KeyValuePair<string, object>("ENV Footer", _sectionValue);
                 foreach (var component in EnvFooter) { yield return component; }
             }
@@ -236,7 +230,7 @@ namespace ENVParser
                 // Add any additional logic here, e.g., filtering, transformation
                 yield return pair;
             }
-        }        
+        }
     }
 
 }

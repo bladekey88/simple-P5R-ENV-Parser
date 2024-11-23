@@ -24,7 +24,7 @@ namespace ENVParser.ENVFileComponents
         public float SSAO_BlurScale { get; set; }
         public float SSAO_Brightness { get; set; }
         public float SSAO_DepthRange { get; set; }
-        public bool DisableUnknownFlaggedSection { get; set; }      
+        public bool DisableUnknownFlaggedSection { get; set; }
 
         public UnknownSection Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
@@ -66,7 +66,7 @@ namespace ENVParser.ENVFileComponents
             return this;
         }
 
-        public UnknownSection Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion) 
+        public UnknownSection Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             if (GFSVersion >= 17846352)
             {
@@ -90,10 +90,10 @@ namespace ENVParser.ENVFileComponents
             writer.Write(DOF_FarBlurPlane);
             writer.Write(DOF_FarBlurLimit);
             writer.Write(DOF_BlurScale);
-            
+
             if (GFSVersion >= 17846288)
-            {                
-            writer.Write(DOF_GaussType);
+            {
+                writer.Write(DOF_GaussType);
             }
             writer.Write(EnableSSAO);
             writer.Write(SSAO_OccluderRadius);
@@ -102,7 +102,7 @@ namespace ENVParser.ENVFileComponents
             writer.Write(SSAO_Brightness);
             writer.Write(SSAO_DepthRange);
             writer.Write(DisableUnknownFlaggedSection);
-            return this; 
+            return this;
         }
     }
 }

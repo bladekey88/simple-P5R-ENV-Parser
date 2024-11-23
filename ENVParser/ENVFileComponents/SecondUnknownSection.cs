@@ -17,7 +17,7 @@ namespace ENVParser.ENVFileComponents
         public float Field2F2 { get; set; }
         public float Field2F6 { get; set; }
         public float ReflectionHeight { get; set; }
-        
+
         public SecondUnknownSection Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             LightMapR = reader.ReadSingle();
@@ -53,7 +53,7 @@ namespace ENVParser.ENVFileComponents
             writer.Write(EnableOutline);
             writer.Write(OutlineOpacity);
             writer.Write(OutlineWidth);
-            
+
             if (GFSVersion >= 17844592)
             {
                 writer.Write(CharacterOutlineBrightness);
@@ -63,7 +63,7 @@ namespace ENVParser.ENVFileComponents
             {
                 writer.Write(Field2F2);
                 writer.Write(Field2F6);
-            }   
+            }
             writer.Write(ReflectionHeight);
             return this;
         }
