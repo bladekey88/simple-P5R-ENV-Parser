@@ -1,11 +1,4 @@
-﻿using ENVParser.Utils;
-using ENVParser.Utils.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
@@ -16,11 +9,11 @@ namespace ENVParser.ENVFileComponents
     internal class BaseEnvSection : IKeyValueEnumerable
     {
         public virtual IEnumerator<KeyValuePair<string, object>> GetEnumerator()
-        {             
+        {
             foreach (var propertyInfo in GetType().GetProperties())
             {
                 yield return new KeyValuePair<string, object>(propertyInfo.Name, propertyInfo.GetValue(this));
             }
-        }        
+        }
     }
 }

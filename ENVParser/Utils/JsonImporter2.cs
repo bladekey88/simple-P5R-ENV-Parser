@@ -1,27 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Text.Json;
-using System.Reflection;
+﻿using System.Text.Json;
 
 namespace ENVParser.Utils
 {
     internal class JsonImporter2
     {
         public JsonImporter2() { }
-        public static Root DeserialiseJson(string json,EnvFile envFile)
+        public static Root DeserialiseJson(string json, EnvFile envFile)
         {
             Root rootObject = JsonSerializer.Deserialize<Root>(json);
 
             // Update the envFile
             Dictionary<string, object> jsonData = [];
-            TraverseRoot(rootObject,jsonData);
-            envFile.Add(jsonData);           
+            TraverseRoot(rootObject, jsonData);
+            envFile.Add(jsonData);
 
-           return rootObject;
+            return rootObject;
         }
 
         public static void TraverseRoot(object obj, Dictionary<string, object> result, string? propertyName = null)
@@ -44,7 +37,7 @@ namespace ENVParser.Utils
                 foreach (var property in properties)
                 {
                     var propertyValue = property.GetValue(obj);
-                    TraverseRoot(propertyValue,result, property.Name);
+                    TraverseRoot(propertyValue, result, property.Name);
                 }
             }
         }
@@ -70,7 +63,7 @@ namespace ENVParser.Utils
 
         public class Field
         {
-     
+
             public required string FieldName { get; set; }
             public required Object FieldValue { get; set; }
             public required string FieldType { get; set; }

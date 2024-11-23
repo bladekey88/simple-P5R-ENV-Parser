@@ -11,7 +11,7 @@ namespace ENVParser.ENVFileComponents
         public float Yellow { get; set; }
         public float Dodge { get; set; }
         public float Burn { get; set; }
-        
+
         public ColourCorrection Read(BigEndianBinaryReader reader)
         {
             DisplayColourGrading = reader.ReadBoolean();

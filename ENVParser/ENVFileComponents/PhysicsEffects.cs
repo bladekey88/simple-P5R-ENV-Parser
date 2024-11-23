@@ -15,23 +15,24 @@ namespace ENVParser.ENVFileComponents
         public float WindStrengthModifier { get; set; }
         public float WindCycleTime { get; set; }
         public float WindCycleDelay { get; set; }
-     
+
         public PhysicsEffects Read(BigEndianBinaryReader reader)
         {
-                EnablePhysicsSection = reader.ReadBoolean();
-                Gravity = reader.ReadSingle();
-                EnableWind = reader.ReadBoolean();
-                WindDirectionX = reader.ReadSingle();
-                WindDirectionY = reader.ReadSingle();
-                WindDirectionZ = reader.ReadSingle();
-                WindStrength = reader.ReadSingle();
-                WindStrengthModifier = reader.ReadSingle();
-                WindCycleTime = reader.ReadSingle();
-                WindCycleDelay = reader.ReadSingle();
-                return this;
+            EnablePhysicsSection = reader.ReadBoolean();
+            Gravity = reader.ReadSingle();
+            EnableWind = reader.ReadBoolean();
+            WindDirectionX = reader.ReadSingle();
+            WindDirectionY = reader.ReadSingle();
+            WindDirectionZ = reader.ReadSingle();
+            WindStrength = reader.ReadSingle();
+            WindStrengthModifier = reader.ReadSingle();
+            WindCycleTime = reader.ReadSingle();
+            WindCycleDelay = reader.ReadSingle();
+            return this;
         }
 
-        public PhysicsEffects Write(BinaryWriter writer) {
+        public PhysicsEffects Write(BinaryWriter writer)
+        {
             writer.Write(EnablePhysicsSection);
             writer.Write(Gravity);
             writer.Write(EnableWind);

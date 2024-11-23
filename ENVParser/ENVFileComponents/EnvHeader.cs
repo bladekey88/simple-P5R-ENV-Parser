@@ -1,7 +1,5 @@
-﻿using CsvHelper;
-using ENVParser.Utils;
+﻿using ENVParser.Utils;
 using ENVParser.Utils.Interfaces;
-using System.Collections.Generic;
 
 namespace ENVParser.ENVFileComponents
 {
@@ -10,8 +8,8 @@ namespace ENVParser.ENVFileComponents
         public uint FileMagic { get; set; }
         public uint GFSVersion { get; set; }
         public uint FileType { get; set; }
-        public uint Field0C { get; set; }       
-        
+        public uint Field0C { get; set; }
+
         public EnvHeader Read(BigEndianBinaryReader reader)
         {
             FileMagic = reader.ReadUInt32();
