@@ -10,6 +10,7 @@ namespace ENVParser.ENVFileComponents
         public byte ClearColourBlue { get; set; }
         public byte ClearColourAlpha { get; set; }
 
+
         public ClearColour Read(BigEndianBinaryReader reader)
         {
             ClearColourRed = reader.ReadByte();

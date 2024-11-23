@@ -31,17 +31,6 @@ namespace ENVParser.Utils
                 throw new ArgumentNullException(nameof(filePath), "An output file path must be supplied.");
             }
             string outputDirectory = Path.GetDirectoryName(filePath) ?? throw new InvalidOperationException("Failed to get directory name from file path.");
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("ERROR\tAn error occurred");
-            Console.WriteLine("REASON\tCSV EXPORT DISABLED PENDING RE-WRITE. USE AN OLDER VERSION");
-            Console.ResetColor();
-            throw new NotImplementedException();
-            // Derive GameVersion
-            //ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.GFSVersion);
-
-            // Get valid fields for GFS Version
-            //List<string> validFields = P5VersionsFieldsProvider.GetP5UniqueVersionFields(envFile.GFSVersion);
-
 
 
             // Derive GameVersion

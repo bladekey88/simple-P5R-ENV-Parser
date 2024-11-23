@@ -30,7 +30,8 @@ namespace ENVParser.ENVFileComponents
         public float Field5E { get; set; }
         public float FieldModelLightX { get; set; }
         public float FieldModelLightY { get; set; }
-        public float FieldModelLightZ { get; set; } 
+        public float FieldModelLightZ { get; set; }
+       
 
         public FieldModeLighting Read(BigEndianBinaryReader reader)
         {
