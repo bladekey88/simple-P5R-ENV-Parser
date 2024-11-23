@@ -1,9 +1,10 @@
 ﻿using ENVParser.Fields;
 using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal sealed class EnvFooter : IEnvFileSectionVersionSpecific<EnvFooter>
+    internal sealed class EnvFooter : BaseEnvSection, IEnvFileSectionVersionSpecific<EnvFooter>
     {
         public uint Field324 { get; set; }
         public uint Field328 { get; set; }
@@ -12,6 +13,7 @@ namespace ENVParser.ENVFileComponents
         public uint Field334 { get; set; }
         public byte Field338 { get; set; }
 
+        
         public EnvFooter Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             if (GFSVersion >= 17843968)
@@ -29,5 +31,25 @@ namespace ENVParser.ENVFileComponents
             }
             return this;
         }
+
+        public EnvFooter Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
+        {
+            if (GFSVersion >= 17843968)
+            {
+                writer.Write(Field324);
+            }
+
+            if (GameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
+            {
+                writer.Write(Field328);
+                writer.Write(Field32C);
+                writer.Write(Field330);
+                writer.Write(Field334);
+                writer.Write(Field338);
+            }
+            return this;
+        }
+
+
     }
 }

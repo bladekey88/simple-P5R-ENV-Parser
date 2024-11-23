@@ -1,8 +1,9 @@
 ﻿using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class ColourCorrection : IEnvFileSection<ColourCorrection>
+    internal sealed class ColourCorrection : BaseEnvSection, IEnvFileSection<ColourCorrection>
     {
         public bool DisplayColourGrading { get; set; }
         public float Cyan { get; set; }
@@ -10,7 +11,7 @@ namespace ENVParser.ENVFileComponents
         public float Yellow { get; set; }
         public float Dodge { get; set; }
         public float Burn { get; set; }
-
+        
         public ColourCorrection Read(BigEndianBinaryReader reader)
         {
             DisplayColourGrading = reader.ReadBoolean();
@@ -19,6 +20,17 @@ namespace ENVParser.ENVFileComponents
             Yellow = reader.ReadSingle();
             Dodge = reader.ReadSingle();
             Burn = reader.ReadSingle();
+            return this;
+        }
+
+        public ColourCorrection Write(BigEndianBinaryWriter writer)
+        {
+            writer.Write(DisplayColourGrading);
+            writer.Write(Cyan);
+            writer.Write(Magenta);
+            writer.Write(Yellow);
+            writer.Write(Dodge);
+            writer.Write(Burn);
             return this;
         }
     }

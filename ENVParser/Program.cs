@@ -2,6 +2,7 @@
 using ENVParser;
 using ENVParser.Fields;
 using ENVParser.Utils;
+using System.Collections;
 internal class Program
 {
     private static void Main(string[] args)
@@ -32,49 +33,58 @@ internal class Program
 
         // Prepare object for use.
         EnvFile envFile = new();
-        EnvFile envFileHeader = [];
+        EnvFile envFileHeader = new();
 
         // Process Files
-        if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
+        if (Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase) && Path.GetFileName(filePath).Contains(".ENV.json", StringComparison.OrdinalIgnoreCase))
         {
             try
             {
-                throw new NotImplementedException("Functionality Temporarily Disabled");
+
                 string jsonString = File.ReadAllText(filePath);
-                var deserialisedJson = JsonImporter.DeserialiseJson(jsonString);
+                JsonImporter2.DeserialiseJson(jsonString,envFile);
+                
+                // After deserialisation check if valid version
+                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.EnvHeader.GFSVersion, true);
 
-                // Update Env Object with data - special override needed for reserve
-                // ByteArray should max out at 188.
-                byte[] reserveSection = new byte[188];
-                int byteIndex = 0;
+                // Notidy Users
+                Console.WriteLine();
+                Console.WriteLine($"INFO\tOutput ENV file will be based on the GFS Version supplied");
+                Console.WriteLine($"INFO\tThe program does not validate if field presence against version");
+                Console.WriteLine($"INFO\tThus extra fields that don't exist in a version will be skipped");
+                Console.WriteLine($"INFO\tMissing fields that are expected by the version will be set to 0 or an empty string or equivalent");
+                Console.WriteLine($"INFO\tAdditionally the 010 templates have conditional logic that may omit fields based on the version number");
+                Console.WriteLine();
 
-                foreach (var item in deserialisedJson)
-                {
-                    if (item.FieldName.Contains("Reserve", StringComparison.OrdinalIgnoreCase))
-                    {
-                        reserveSection[byteIndex] = (byte)item.FieldValue;
-
-                        // Override Name and Value for the reserve fields
-                        if (byteIndex < 187)
-                        {
-                            byteIndex++;
-                            continue;
-                        }
-                        else
-                        {
-                            item.FieldName = "UnusedTextureSection";
-                            item.FieldValue = reserveSection;
-                        }
-                    }
-                    envFile.Add(item.FieldName, item.FieldValue);
-                }
 
                 // Write out to file
                 string outputENV = Path.GetFullPath(filePath).ToString().Replace(".ENV.json", ".ENV");
+               
+                if (Path.Exists(outputENV)) {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"WARN\t'{outputENV}' already exists and will be overwritten");
+                    Console.WriteLine($"WARN\tOverwriting this file CANNOT be undone");
+                    Console.WriteLine($"WARN\tPress any key to proceed or ESCAPE to abort");
+                    var cki = Console.ReadKey();
+                    Console.ResetColor();
+                    if (cki.Key == ConsoleKey.Escape)
+                    {
+                        Console.WriteLine($"IINFO\tOperation aborted. The existing file has not been modified");
+                        return;
+                    }
+                }
                 using var stream = new FileStream(outputENV, FileMode.Create, FileAccess.Write);
                 using BigEndianBinaryWriter writer = new(stream);
                 envFile.Write(writer);
-                return;
+                
+                // Update the user
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"OK\tConversion to ENV complete");
+                Console.ResetColor();
+                Console.WriteLine($"INFO\tENV file created at: '{outputENV}'");
+                Console.WriteLine("\nPress Enter to close this window");
+                Console.ReadKey(true);
+
             }
             catch (Exception ex)
             {
@@ -105,8 +115,8 @@ internal class Program
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 envFile.Read(reader);
-
-
+              
+               
                 // Determine the output and write it
                 string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
                     ? "csv"

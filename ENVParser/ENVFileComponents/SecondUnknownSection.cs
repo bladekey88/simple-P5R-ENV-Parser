@@ -1,9 +1,10 @@
 ﻿using ENVParser.Fields;
 using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class SecondUnknownSection : IEnvFileSectionVersionSpecific<SecondUnknownSection>
+    internal class SecondUnknownSection : BaseEnvSection, IEnvFileSectionVersionSpecific<SecondUnknownSection>
     {
         public float LightMapR { get; set; }
         public float LightMapG { get; set; }
@@ -16,6 +17,7 @@ namespace ENVParser.ENVFileComponents
         public float Field2F2 { get; set; }
         public float Field2F6 { get; set; }
         public float ReflectionHeight { get; set; }
+        
         public SecondUnknownSection Read(BigEndianBinaryReader reader, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
         {
             LightMapR = reader.ReadSingle();
@@ -39,6 +41,30 @@ namespace ENVParser.ENVFileComponents
             }
             ReflectionHeight = reader.ReadSingle();
 
+            return this;
+        }
+
+        public SecondUnknownSection Write(BigEndianBinaryWriter writer, uint GFSVersion, ValidVersionHeaderProvider.GameVersions? GameVersion)
+        {
+            writer.Write(LightMapR);
+            writer.Write(LightMapG);
+            writer.Write(LightMapB);
+            writer.Write(LightMapA);
+            writer.Write(EnableOutline);
+            writer.Write(OutlineOpacity);
+            writer.Write(OutlineWidth);
+            
+            if (GFSVersion >= 17844592)
+            {
+                writer.Write(CharacterOutlineBrightness);
+            }
+
+            if (GFSVersion >= 17846320)
+            {
+                writer.Write(Field2F2);
+                writer.Write(Field2F6);
+            }   
+            writer.Write(ReflectionHeight);
             return this;
         }
     }

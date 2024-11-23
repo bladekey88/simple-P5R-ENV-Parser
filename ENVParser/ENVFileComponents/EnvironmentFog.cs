@@ -1,8 +1,9 @@
 ﻿using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal sealed class EnvironmentFog : IEnvFileSection<EnvironmentFog>
+    internal sealed class EnvironmentFog : BaseEnvSection, IEnvFileSection<EnvironmentFog>
     {
         public bool EnableFog { get; set; }
         public bool EnableAmbientFog { get; set; }
@@ -21,8 +22,7 @@ namespace ENVParser.ENVFileComponents
         public float FloorFogGreen { get; set; }
         public float FloorFogBlue { get; set; }
         public float FloorFogOpacity { get; set; }
-
-
+        
         public EnvironmentFog Read(BigEndianBinaryReader reader)
         {
             EnableFog = reader.ReadBoolean();
@@ -45,6 +45,26 @@ namespace ENVParser.ENVFileComponents
             return this;
         }
 
-
+        public EnvironmentFog Write(BigEndianBinaryWriter writer)
+        {
+            writer.Write(EnableFog);
+            writer.Write(EnableAmbientFog);
+            writer.Write(DisableFog);
+            writer.Write(ToggleFogCameraPlane);
+            writer.Write(FogStartDistance);
+            writer.Write(FogEndDistance);
+            writer.Write(FogRed);
+            writer.Write(FogGreen);
+            writer.Write(FogBlue);
+            writer.Write(FogAlpha);
+            writer.Write(EnableFloorFog);
+            writer.Write(FloorFogStartingHeight);
+            writer.Write(FloorFogEndHeight);
+            writer.Write(FloorFogRed);
+            writer.Write(FloorFogGreen);
+            writer.Write(FloorFogBlue);
+            writer.Write(FloorFogOpacity);
+            return this; 
+        }
     }
 }

@@ -1,13 +1,15 @@
 ﻿using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 
 namespace ENVParser.ENVFileComponents
 {
-    internal class ClearColour : IEnvFileSection<ClearColour>
+    internal class ClearColour : BaseEnvSection, IEnvFileSection<ClearColour>
     {
         public byte ClearColourRed { get; set; }
         public byte ClearColourGreen { get; set; }
         public byte ClearColourBlue { get; set; }
         public byte ClearColourAlpha { get; set; }
+
 
         public ClearColour Read(BigEndianBinaryReader reader)
         {
@@ -15,6 +17,15 @@ namespace ENVParser.ENVFileComponents
             ClearColourGreen = reader.ReadByte();
             ClearColourBlue = reader.ReadByte();
             ClearColourAlpha = reader.ReadByte();
+            return this;
+        }
+
+        public ClearColour Write(BigEndianBinaryWriter writer)
+        {
+            writer.Write(ClearColourRed);
+            writer.Write(ClearColourGreen);
+            writer.Write(ClearColourBlue);
+            writer.Write(ClearColourAlpha);
             return this;
         }
     }

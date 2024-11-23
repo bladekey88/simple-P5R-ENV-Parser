@@ -1,13 +1,20 @@
 ﻿using ENVParser.ENVFileComponents;
 using ENVParser.Fields;
 using ENVParser.Utils;
+using ENVParser.Utils.Interfaces;
 using System.Collections;
+using System.ComponentModel;
 using System.Reflection;
+using System.Collections.Generic;
+using static ENVParser.JsonImporter;
+using Microsoft.VisualBasic;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace ENVParser
 {
 
     [Serializable]
-    internal class EnvFile : IEnumerable<KeyValuePair<string, object>>
+    internal class EnvFile : IKeyValueEnumerable
     {
         public EnvHeader EnvHeader { get; set; }
         public uint GFSVersion { get; set; }
@@ -31,6 +38,7 @@ namespace ENVParser
 
         private readonly Dictionary<string, PropertyInfo> _propertyMap = [];
         private readonly Dictionary<string, object> _envVariables = [];
+        internal static readonly string _sectionValue = "";
 
         public EnvFile()
         {
@@ -53,28 +61,53 @@ namespace ENVParser
             ClearColours = new ClearColour();
             EnvFooter = new EnvFooter();
 
-            //DEPRECATED
+            //DEPRECATED TO BE REMOVED
             // Populate the property map
-            foreach (var property in typeof(EnvFile).GetProperties(BindingFlags.Public | BindingFlags.Instance))
-            {
-                _propertyMap[property.Name] = property;
-            }
+            //foreach (var property in typeof(EnvFile).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            //{
+            //    _propertyMap[property.Name] = property;
+            //}
         }
 
-        public void Add(string key, object value)
+        public void Add(Dictionary<string, object> dataObject)
+            // This hopefully will be generic may only be the JSON implementation
         {
-            if (_propertyMap.ContainsKey(key))
+            foreach (var entry in dataObject)
             {
-                PropertyInfo property = _propertyMap[key];
-                if (property.CanWrite)
+                // Get the property of the current object that corresponds to the key
+                // Essentially the component class
+                var rootProperty = this.GetType().GetProperty(entry.Key);
+
+                if (rootProperty != null)
                 {
-                    property.SetValue(this, value);
+                    // We want to get the actual instance object not the properties of it
+                    var rootObject = rootProperty.GetValue(this);
+
+                    // Need to explicitly set this to a dictionary so we can iterate (rather than generic object)
+                    Dictionary<string, object> propertyFields = (Dictionary<string, object>)entry.Value;
+
+                    foreach (var kvp in propertyFields)
+                    {
+                        // Get the name and value of the current field
+                        string propertyName = kvp.Key;
+                        object propertyValue = kvp.Value;
+
+                        // Get the PropertyInfo object for the current property field
+                        // This ensures we can map 1:1 from the deserialised json to the object field
+                        PropertyInfo propertyInfo = rootObject.GetType().GetProperty(propertyName);
+
+                        if (propertyInfo != null)
+                        {
+                            // Convert the property value to the correct type - deriving it from the data
+                            object convertedValue = Convert.ChangeType(propertyValue, propertyInfo.PropertyType);
+
+                            propertyInfo.SetValue(rootObject, convertedValue);
+                        }
+                    }
                 }
             }
-            else
-            {
-                throw new InvalidOperationException($"Unknown Property: {key} with value {value}");
-            }
+            this.GFSVersion = this.EnvHeader.GFSVersion;
+            this.GameVersion = ValidVersionHeaderProvider.CheckValidVersion(GFSVersion);
         }
 
         public EnvFile Read(BigEndianBinaryReader reader)
@@ -84,7 +117,7 @@ namespace ENVParser
             this.GFSVersion = this.EnvHeader.GFSVersion;
             this.GameVersion = ValidVersionHeaderProvider.CheckValidVersion(GFSVersion);
 
-            // Read Files
+            // Read Content Sections from File
             FieldModelLight0.Read(reader);
             FieldModelLight1.Read(reader);
             FieldModelLight2.Read(reader);
@@ -114,225 +147,96 @@ namespace ENVParser
 
         public void Write(BigEndianBinaryWriter writer)
         {
-            //ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(GFSVersion);
+            this.GFSVersion = this.EnvHeader.GFSVersion;
+            this.GameVersion = ValidVersionHeaderProvider.CheckValidVersion(GFSVersion);
 
-            //writer.Write(FileMagic);
-            //writer.Write(GFSVersion);
-            //writer.Write(FileType);
-            //writer.Write(Field0C);
-            //writer.Write(Field10);
-            //writer.Write(EnableFieldModelSection);
-            //writer.Write(FieldModelAmbientRed);
-            //writer.Write(FieldModelAmbientGreen);
-            //writer.Write(FieldModelAmbientBlue);
-            //writer.Write(FieldModelAmbientAlpha);
-            //writer.Write(FieldModelDiffuseRed);
-            //writer.Write(FieldModelDiffuseGreen);
-            //writer.Write(FieldModelDiffuseBlue);
-            //writer.Write(FieldModelDiffuseAlpha);
-            //writer.Write(FieldModelSpecularRed);
-            //writer.Write(FieldModelSpecularGreen);
-            //writer.Write(FieldModelSpecularBlue);
-            //writer.Write(FieldModelSpecularAlpha);
-            //writer.Write(FieldModelEmissiveRed);
-            //writer.Write(FieldModelEmissiveGreen);
-            //writer.Write(FieldModelEmissiveBlue);
-            //writer.Write(FieldModelEmissiveAlpha);
-            //writer.Write(Field52);
-            //writer.Write(Field56);
-            //writer.Write(Field5A);
-            //writer.Write(Field5E);
-            //writer.Write(FieldModelLightX);
-            //writer.Write(FieldModelLightY);
-            //writer.Write(FieldModelLightZ);
-            //writer.Write(UnusedTextureSection);
-            //writer.Write(Field12A);
-            //writer.Write(EnableCharacterModelSection);
-            //writer.Write(CharacterModelAmbientRed);
-            //writer.Write(CharacterModelAmbientGreen);
-            //writer.Write(CharacterModelAmbientBlue);
-            //writer.Write(CharacterModelAmbientAlpha);
-            //writer.Write(CharacterModelDiffuseRed);
-            //writer.Write(CharacterModelDiffuseGreen);
-            //writer.Write(CharacterModelDiffuseBlue);
-            //writer.Write(CharacterModelDiffuseAlpha);
-            //writer.Write(CharacterModelSpecularRed);
-            //writer.Write(CharacterModelSpecularGreen);
-            //writer.Write(CharacterModelSpecularBlue);
-            //writer.Write(CharacterModelSpecularAlpha);
-            //writer.Write(CharacterModelEmissiveRed);
-            //writer.Write(CharacterModelEmissiveGreen);
-            //writer.Write(CharacterModelEmissiveBlue);
-            //writer.Write(CharacterModelEmissiveAlpha);
-            //writer.Write(Field16C);
-            //writer.Write(Field170);
-            //writer.Write(Field174);
-            //writer.Write(Field178);
-            //writer.Write(CharacterModelLightX);
-            //writer.Write(CharacterModelLightY);
-            //writer.Write(CharacterModelLightZ);
-            //writer.Write(Field188);
-            //writer.Write(ModelNearClip);
-            //writer.Write(ModelFarClip);
-            //writer.Write(EnableFog);
-            //writer.Write(EnableAmbientFog);
-            //writer.Write(DisableFog);
-            //writer.Write(ToggleFogCameraPlane);
-            //writer.Write(FogStartDistance);
-            //writer.Write(FogEndDistance);
-            //writer.Write(FogRed);
-            //writer.Write(FogGreen);
-            //writer.Write(FogBlue);
-            //writer.Write(FogAlpha);
-            //writer.Write(EnableFloorFog);
-            //writer.Write(FloorFogStartingHeight);
-            //writer.Write(FloorFogEndHeight);
-            //writer.Write(FloorFogRed);
-            //writer.Write(FloorFogGreen);
-            //writer.Write(FloorFogBlue);
-            //writer.Write(FloorFogOpacity);
-            //writer.Write(EnableGraphicOutput);
-            //writer.Write(EnableBloom);
-            //writer.Write(EnableGlare);
-            //writer.Write(Field1CC);
-
-            //// P5R Only Fields
-            //if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-            //{
-            //    writer.Write(Field1CD);
-            //    writer.Write(Field1CE);
-            //    writer.Write(Field1CF);
-            //    writer.Write(Field1D0);
-            //}
-
-            //writer.Write(BloomAmount);
-            //writer.Write(BloomDetail);
-            //writer.Write(BloomWhiteLevel);
-            //writer.Write(BloomDarkLevel);
-            //writer.Write(GlareSensitivity);
-
-            //if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-            //{
-            //    writer.Write(SceneWhiteLevels);
-            //    writer.Write(SceneDarkLevels);
-            //    writer.Write(Field1F0);
-            //    writer.Write(Field1F4);
-            //    writer.Write(Field1F8);
-            //    writer.Write(Field1FC);
-            //    writer.Write(Field200);
-            //    writer.Write(Field204);
-            //    writer.Write(Field208);
-            //    writer.Write(Field20C);
-            //    writer.Write(Field210);
-            //    writer.Write(Field214);
-            //    writer.Write(RedColourBoost);
-            //    writer.Write(GreenColourBoost);
-            //    writer.Write(BlueColourBoost);
-            //    writer.Write(Field224);
-            //    writer.Write(Field228);
-            //    writer.Write(Field22C);
-            //    writer.Write(Field230);
-            //    writer.Write(Field234);
-            //    writer.Write(Field238);
-            //    writer.Write(Field23C);
-            //}
-            //writer.Write(GlareLength);
-            //writer.Write(GlareChromaticAberration);
-            //writer.Write(GlareDirection);
-            //writer.Write(GlareMode);
-            //writer.Write(Field250);
-            //writer.Write(Field251);
-            //if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-            //{
-            //    writer.Write(Field255);
-            //}
-            //writer.Write(Field259);
-            //writer.Write(Field25D);
-            //writer.Write(EnableDOF);
-            //writer.Write(DOF_FocalPlane);
-            //writer.Write(DOF_NearBlurPlane);
-            //writer.Write(DOF_FarBlurPlane);
-            //writer.Write(DOF_FarBlurLimit);
-            //writer.Write(DOF_BlurScale);
-            //writer.Write(DOF_GaussType);
-            //writer.Write(EnableSSAO);
-            //writer.Write(SSAO_OccluderRadius);
-            //writer.Write(SSAO_FallOffRadius);
-            //writer.Write(SSAO_BlurScale);
-            //writer.Write(SSAO_Brightness);
-            //writer.Write(SSAO_DepthRange);
-            //writer.Write(DisableUnknownFlaggedSection);
-            //writer.Write(FieldShadowFarClip);
-            //writer.Write(Field294);
-            //writer.Write(AmbientShadowBrightness);
-            //writer.Write(Field29C);
-            //writer.Write(Field2A0);
-            //writer.Write(FieldShadowNearClip);
-            //writer.Write(FieldShadowBrightness);
-            //writer.Write(Field2AC);
-            //writer.Write(Field2AD);
-            //writer.Write(Field2AE);
-            //writer.Write(Field2AF);
-            ////if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-            ////{
-            ////    writer.Write(ShadowColourRed);
-            ////    writer.Write(ShadowColourGreen);
-            ////    writer.Write(ShadowColourBlue);
-            ////    writer.Write(ShadowColourAlpha);
-            ////}
-            //writer.Write(DisplayColourGrading);
-            //writer.Write(Cyan);
-            //writer.Write(Magenta);
-            //writer.Write(Yellow);
-            //writer.Write(Dodge);
-            //writer.Write(Burn);
-            //writer.Write(LightMapR);
-            //writer.Write(LightMapG);
-            //writer.Write(LightMapB);
-            //writer.Write(LightMapA);
-            //writer.Write(EnableOutline);
-            //writer.Write(OutlineOpacity);
-            //writer.Write(OutlineWidth);
-            //writer.Write(CharacterOutlineBrightness);
-            //writer.Write(Field2F2);
-            //writer.Write(Field2F6);
-            //writer.Write(ReflectionHeight);
-            //writer.Write(EnablePhysicsSection);
-            //writer.Write(Gravity);
-            //writer.Write(EnableWind);
-            //writer.Write(WindDirectionX);
-            //writer.Write(WindDirectionY);
-            //writer.Write(WindDirectionZ);
-            //writer.Write(WindStrength);
-            //writer.Write(WindStrengthModifier);
-            //writer.Write(WindCycleTime);
-            //writer.Write(WindCycleDelay);
-            //writer.Write(ClearColourRed);
-            //writer.Write(ClearColourGreen);
-            //writer.Write(ClearColourBlue);
-            //writer.Write(ClearColourAlpha);
-            //writer.Write(Field324);
-            //if (gameVersion.Equals(ValidVersionHeaderProvider.GameVersions.P5Royal))
-            //{
-            //    writer.Write(Field328);
-            //    writer.Write(Field32C);
-            //    writer.Write(Field330);
-            //    writer.Write(Field334);
-            //    writer.Write(Field338);
-            //}
+            EnvHeader.Write(writer);
+            FieldModelLight0.Write(writer);
+            FieldModelLight1.Write(writer);
+            FieldModelLight2.Write(writer);
+            CharacterModelLight.Write(writer, GFSVersion, GameVersion);
+            Fog.Write(writer);
+            GlobalLightingEffects.Write(writer, GFSVersion, GameVersion);
+            UnknownEffects.Write(writer, GFSVersion, GameVersion);
+            FieldShadows.Write(writer);
+            FieldShadowColours.Write(writer, GFSVersion, GameVersion);
+            ColourCorrections.Write(writer);
+            SecondUnknownEffects.Write(writer, GFSVersion, GameVersion);
+            Physics.Write(writer);
+            ClearColours.Write(writer);
+            EnvFooter.Write(writer, GFSVersion, GameVersion);            
         }
 
         public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
         {
-            foreach (var prop in typeof(EnvFile).GetProperties(BindingFlags.Public | BindingFlags.Instance))
+
             {
-                yield return new KeyValuePair<string, object>(prop.Name, prop.GetValue(this));
+                yield return new KeyValuePair<string, object>("ENV Header", _sectionValue);
+                foreach (var component in EnvHeader) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Field Model Light 0", _sectionValue);
+                foreach (var component in FieldModelLight0) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Field Model Light 1", _sectionValue);
+                foreach (var component in FieldModelLight1) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Field Model Light 2", _sectionValue);
+                foreach (var component in FieldModelLight2) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Character Model Light", _sectionValue);
+                foreach (var component in CharacterModelLight) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Fog", _sectionValue);
+                foreach (var component in Fog) { yield return component; }
+               
+                yield return new KeyValuePair<string, object>("Global Lighting Effects", _sectionValue);
+                foreach (var component in GlobalLightingEffects) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Unknown Section", _sectionValue);
+                foreach (var component in UnknownEffects) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Field Shadows", _sectionValue);
+                foreach (var component in FieldShadows) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Field Shadows Colour", _sectionValue);
+                foreach (var component in FieldShadowColours) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Colour Corrections", _sectionValue);
+                foreach (var component in ColourCorrections) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Second Unknown Section", _sectionValue);
+                foreach (var component in SecondUnknownEffects) { yield return component; }
+               
+                yield return new KeyValuePair<string, object>("Physics", _sectionValue);
+                foreach (var component in Physics) { yield return component; }
+                
+                yield return new KeyValuePair<string, object>("Clear Colours", _sectionValue);
+                foreach (var component in ClearColours) { yield return component; }
+               
+                yield return new KeyValuePair<string, object>("ENV Footer", _sectionValue);
+                foreach (var component in EnvFooter) { yield return component; }
             }
         }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator(); // Calls the generic version
-        }
     }
+
+
+    internal class EnvFileWrapper : IKeyValueEnumerable
+    {
+        private readonly EnvFile _envFile;
+
+        public EnvFileWrapper(EnvFile envFile)
+        {
+            _envFile = envFile;
+        }
+
+        public IEnumerator<KeyValuePair<string, object>> GetEnumerator()
+        {
+            foreach (var pair in _envFile)
+            {
+                // Add any additional logic here, e.g., filtering, transformation
+                yield return pair;
+            }
+        }        
+    }
+
 }
