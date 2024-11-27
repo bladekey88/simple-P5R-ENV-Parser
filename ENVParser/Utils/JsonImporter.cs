@@ -1,32 +1,74 @@
 ﻿using System.Text.Json;
 
-namespace ENVParser
+namespace ENVParser.Utils
 {
     internal class JsonImporter
     {
         public JsonImporter() { }
-
-        public static List<Field> DeserialiseJson(string json)
+        public static Root DeserialiseJson(string json, EnvFile envFile)
         {
-            // Deserialise to a list of field Objects, which can
-            // then be mapped onto the ENV Object back in main.
-            // This was to prevent the IEnumerable interface throwing an error
-            // when trying to deseriable directly to EnvFile. 
-            List<Field> deserialisedJson = JsonSerializer.Deserialize<List<Field>>(json);
+            Root rootObject = JsonSerializer.Deserialize<Root>(json);
 
-            foreach (Field field in deserialisedJson)
+            // Update the envFile
+            Dictionary<string, object> jsonData = [];
+            TraverseRoot(rootObject, jsonData);
+            envFile.Add(jsonData);
+
+            return rootObject;
+        }
+
+        public static void TraverseRoot(object obj, Dictionary<string, object> result, string? propertyName = null)
+        {
+            // If we in a parent node (i.e. under EnvHeader)
+            if (obj is List<Field> fieldList)
             {
-                field.ConvertFieldValue();
+                Dictionary<string, object> tempDict = [];
+                foreach (Field field in fieldList)
+                {
+                    field.ConvertFieldValue();
+                    tempDict.Add(field.FieldName, field.FieldValue);
+                }
+                result.Add(propertyName, tempDict);
             }
-            return deserialisedJson;
+            // Otherwise work recursively
+            else if (obj != null)
+            {
+                var properties = obj.GetType().GetProperties();
+                foreach (var property in properties)
+                {
+                    var propertyValue = property.GetValue(obj);
+                    TraverseRoot(propertyValue, result, property.Name);
+                }
+            }
+        }
 
+        public class Root
+        {
+            public List<Field> EnvHeader { get; set; }
+            public List<Field> FieldModelLight0 { get; set; }
+            public List<Field> FieldModelLight1 { get; set; }
+            public List<Field> FieldModelLight2 { get; set; }
+            public List<Field> CharacterModelLight { get; set; }
+            public List<Field> Fog { get; set; }
+            public List<Field> GlobalLightingEffects { get; set; }
+            public List<Field> UnknownEffects { get; set; }
+            public List<Field> FieldShadows { get; set; }
+            public List<Field> FieldShadowColours { get; set; }
+            public List<Field> ColourCorrections { get; set; }
+            public List<Field> SecondUnknownEffects { get; set; }
+            public List<Field> Physics { get; set; }
+            public List<Field> ClearColours { get; set; }
+            public List<Field> EnvFooter { get; set; }
         }
 
         public class Field
         {
+
             public required string FieldName { get; set; }
             public required Object FieldValue { get; set; }
             public required string FieldType { get; set; }
+
+
 
             public void ConvertFieldValue()
             {
@@ -76,6 +118,5 @@ namespace ENVParser
                 }
             }
         }
-
     }
 }

@@ -23,10 +23,10 @@ internal class Program
             return;
         }
 
-        // Only accept ENV or ENV.json files (for now)
-        if (!Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase) && !Path.GetExtension(filePath).Equals(".json", StringComparison.OrdinalIgnoreCase))
-        {
-            Console.WriteLine($"ERROR\tThe file must be an .ENV or an .ENV.json file: '{Path.GetExtension(filePath)}' provided");
+        List<string> validFileExtensions = [".ENV", ".ENV.json", ".ENV.csv"];
+
+        if (!validFileExtensions.Any(s=>filePath.Contains(s, StringComparison.OrdinalIgnoreCase))) {
+            Console.WriteLine($"ERROR\tThe file must be either an .ENV, .ENV.json, or .ENV.csv file: '{Path.GetExtension(filePath)}' provided");
             return;
         }
 
@@ -41,12 +41,12 @@ internal class Program
             {
 
                 string jsonString = File.ReadAllText(filePath);
-                JsonImporter2.DeserialiseJson(jsonString, envFile);
+                JsonImporter.DeserialiseJson(jsonString, envFile);
 
                 // After deserialisation check if valid version
                 ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.EnvHeader.GFSVersion, true);
 
-                // Notidy Users
+                // Notify Users
                 Console.WriteLine();
                 Console.WriteLine($"INFO\tOutput ENV file will be based on the GFS Version supplied");
                 Console.WriteLine($"INFO\tThe program does not validate if field presence against version");
@@ -96,6 +96,9 @@ internal class Program
             }
             return;
         }
+
+        else if (Path.GetExtension(filePath).Equals(".csv", StringComparison.OrdinalIgnoreCase)) { }
+
         else if (Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase))
         {
             try
