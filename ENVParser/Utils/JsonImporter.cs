@@ -17,7 +17,7 @@ namespace ENVParser.Utils
             return rootObject;
         }
 
-        public static void TraverseRoot(object obj, Dictionary<string, object> result, string? propertyName = null)
+        private static void TraverseRoot(object obj, Dictionary<string, object> result, string? propertyName = null)
         {
             // If we in a parent node (i.e. under EnvHeader)
             if (obj is List<Field> fieldList)
