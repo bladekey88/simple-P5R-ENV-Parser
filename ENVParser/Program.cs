@@ -39,7 +39,6 @@ internal class Program
         {
             try
             {
-
                 string jsonString = File.ReadAllText(filePath);
                 JsonImporter.DeserialiseJson(jsonString, envFile);
 
@@ -97,7 +96,63 @@ internal class Program
             return;
         }
 
-        else if (Path.GetExtension(filePath).Equals(".csv", StringComparison.OrdinalIgnoreCase)) { }
+        else if (Path.GetExtension(filePath).Equals(".csv", StringComparison.OrdinalIgnoreCase)) 
+        {
+            try
+            {
+                CsvImporter.ProcessCsv(filePath, envFile);
+                // After CSV processing check if valid version
+                ValidVersionHeaderProvider.GameVersions gameVersion = ValidVersionHeaderProvider.CheckValidVersion(envFile.EnvHeader.GFSVersion, true);
+
+                // Notify Users
+                Console.WriteLine();
+                Console.WriteLine($"INFO\tOutput ENV file will be based on the GFS Version supplied");
+                Console.WriteLine($"INFO\tThe program does not validate if field presence against version");
+                Console.WriteLine($"INFO\tThus extra fields that don't exist in a version will be skipped");
+                Console.WriteLine($"INFO\tMissing fields that are expected by the version will be set to 0 or an empty string or equivalent");
+                Console.WriteLine($"INFO\tAdditionally the 010 templates have conditional logic that may omit fields based on the version number");
+                Console.WriteLine();
+
+
+                // Write out to file
+                string outputENV = Path.GetFullPath(filePath).ToString().Replace(".ENV.csv", ".ENV");
+
+                if (Path.Exists(outputENV))
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"WARN\t'{outputENV}' already exists and will be overwritten");
+                    Console.WriteLine($"WARN\tOverwriting this file CANNOT be undone");
+                    Console.WriteLine($"WARN\tPress any key to proceed or ESCAPE to abort");
+                    var cki = Console.ReadKey();
+                    Console.ResetColor();
+                    if (cki.Key == ConsoleKey.Escape)
+                    {
+                        Console.WriteLine($"IINFO\tOperation aborted. The existing file has not been modified");
+                        return;
+                    }
+                }
+                using var stream = new FileStream(outputENV, FileMode.Create, FileAccess.Write);
+                using BigEndianBinaryWriter writer = new(stream);
+                envFile.Write(writer);
+
+                // Update the user
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"OK\tConversion to ENV complete");
+                Console.ResetColor();
+                Console.WriteLine($"INFO\tENV file created at: '{outputENV}'");
+                Console.WriteLine("\nPress Enter to close this window");
+                Console.ReadKey(true);
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"EXCEPTION\t{ex.GetType().Name}");
+                Console.WriteLine($"EXCEPTION\t{ex.Message}");
+                Console.ResetColor();
+                Console.ReadKey(true);
+            }
+            return;
+        }
 
         else if (Path.GetExtension(filePath).Equals(".ENV", StringComparison.OrdinalIgnoreCase))
         {
@@ -118,7 +173,6 @@ internal class Program
                 // As we are using the same reader as the header, reset it to position 0
                 reader.BaseStream.Seek(0, SeekOrigin.Begin);
                 envFile.Read(reader);
-
 
                 // Determine the output and write it
                 string outputFileExtension = args.Length == 2 && args[1].Contains("csv", StringComparison.OrdinalIgnoreCase)
