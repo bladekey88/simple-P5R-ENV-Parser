@@ -165,7 +165,7 @@ namespace ENVParser
         {
 
             {
-                yield return new KeyValuePair<string, object>("ENV Header", _sectionValue);
+                yield return new KeyValuePair<string, object>("Env Header", _sectionValue);
                 foreach (var component in EnvHeader) { yield return component; }
 
                 yield return new KeyValuePair<string, object>("Field Model Light 0", _sectionValue);
@@ -207,7 +207,7 @@ namespace ENVParser
                 yield return new KeyValuePair<string, object>("Clear Colours", _sectionValue);
                 foreach (var component in ClearColours) { yield return component; }
 
-                yield return new KeyValuePair<string, object>("ENV Footer", _sectionValue);
+                yield return new KeyValuePair<string, object>("Env Footer", _sectionValue);
                 foreach (var component in EnvFooter) { yield return component; }
             }
         }

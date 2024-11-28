@@ -44,7 +44,7 @@
 
         private static readonly Dictionary<string, uint[]> _P5FieldsVersionMapping = new()
         {
-            {"ENV Header", ALL_VERSIONS },
+            {"Env Header", ALL_VERSIONS },
             {"FileMagic", ALL_VERSIONS},
             {"GFSVersion", ALL_VERSIONS},
             {"FileType", ALL_VERSIONS},
@@ -237,7 +237,7 @@
             {"ClearColourGreen", ALL_VERSIONS},
             {"ClearColourBlue", ALL_VERSIONS},
             {"ClearColourAlpha", ALL_VERSIONS},
-            {"ENV Footer",  RemoveVersionsFromArray(ALL_VERSIONS, [17842688,17842768,17843456,17843712])},
+            {"Env Footer",  RemoveVersionsFromArray(ALL_VERSIONS, [17842688,17842768,17843456,17843712])},
             {"Field324", RemoveVersionsFromArray(ALL_VERSIONS, [17842688,17842768,17843456,17843712])},
             {"Field328",[17846608]},
             {"Field32C",[17846608]},

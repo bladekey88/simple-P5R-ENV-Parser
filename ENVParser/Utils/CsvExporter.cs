@@ -103,7 +103,7 @@ namespace ENVParser.Utils
                     readableFieldType = "Byte Array";
                     break;
                 case "String":
-                    readableFieldType = "";
+                    readableFieldType = "Section";
                     break;
 
 
